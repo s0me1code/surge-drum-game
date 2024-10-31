@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
-import { Perf } from 'r3f-perf'
 import { useRef, useState } from 'react'
-import { Leva, useControls } from 'leva'
+import { useControls } from 'leva'
 import './App.css'
 import { useCoord } from './state/coordinates'
 
