@@ -1,42 +1,28 @@
 import * as THREE from 'three'
-import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Environment, Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
+import { useEffect, useRef } from 'react'
 import { useControls } from 'leva'
 import './App.css'
-import { useCoord } from './state/coordinates'
+import { Coord3D, useCoord } from './state/coordinates'
 import Gauges from './components/gauges/_gauge'
 import { Drum } from './components/drum'
-import { Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
-
-function Box(props: ThreeElements['mesh']) {
-    const meshRef = useRef<THREE.Mesh>(null!)
-    const [hovered, setHover] = useState(false)
-    const [active, setActive] = useState(false)
-    useFrame((_, delta) => (meshRef.current.rotation.x += delta))
-    return (
-        <mesh
-            {...props}
-            ref={meshRef}
-            scale={active ? 1.5 : 1}
-            onClick={() => setActive(!active)}
-            onPointerOver={() => setHover(true)}
-            onPointerOut={() => setHover(false)}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color={hovered ? 'hotpink' : '#2f74c0'} />
-        </mesh>
-    )
-}
 
 const Model = () => {
     const { scene, nodes } = useGLTF('/public/models/scene.glb');
-
     // Apply a standard material to ensure it's affected by light
-    scene.traverse((child) => {
+    scene.traverse((child: any) => {
+        child.castShadow = true;
+        child.receiveShadow = true;
+
         if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial;
+            child.material = new THREE.MeshStandardMaterial({
+                color: child.material.color, // Retain original color if present
+                roughness: 0.5,
+                metalness: 0.5,
+            });
         }
     });
-
     console.log(scene)
     console.log(nodes)
     return <primitive object={scene} scale={0.5} position={[0, 0, 0]} />;
@@ -59,8 +45,7 @@ function Ground() {
 }
 
 const Experinace = () => {
-
-    const { initBox, setInitBox, saveCoord } = useCoord()
+    const { initBox, setInitBox,initDirectionalLight, setInitDirectionalLight, saveCoord} = useCoord()
     const { positionTemp } = useControls("initBox", {
         positionTemp: {
             joystick: 'invertY',
@@ -68,11 +53,31 @@ const Experinace = () => {
             step: 0.01,
         }
     })
+
+    console.log(initDirectionalLight)
+    const { directionalLightTemp, directionalLightTarget } = useControls("DirectionalLight", {
+        directionalLightTemp: {
+            joystick: 'invertY',
+            value: { ...initDirectionalLight.position },
+            step: 0.01,
+        },
+        directionalLightTarget: {
+            joystick: 'invertY',
+            value: { ...initDirectionalLight.target },
+            step: 0.01,
+        },
+    })
+
+    // to allow save current useControls coordinates
     useEffect(() => {
         const handleKeyDown = (event: any) => {
             if ((event.ctrlKey || event.metaKey) && event.key === 's') {
                 event.preventDefault();
                 setInitBox({ position: { ...positionTemp } })
+                setInitDirectionalLight({
+                    target: { ...directionalLightTarget },
+                    position: { ...directionalLightTemp }
+                })
                 saveCoord();
             }
         };
@@ -80,40 +85,54 @@ const Experinace = () => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [saveCoord, positionTemp]);
+    }, [saveCoord, positionTemp, directionalLightTarget, directionalLightTemp]);
 
+    useFrame(() => {
+        if (cameraRef.current) {
+            //            cameraRef.current.lookAt(0, 3.5, 0);
+        }
+        if (directionalLightRef.current) {
+            directionalLightRef.current.target.position.set(directionalLightTarget.x, directionalLightTarget.y, directionalLightTarget.z)
+            directionalLightRef.current.target.updateMatrixWorld()
+        }
+    })
 
-    const spotLightRef = useRef<THREE.SpotLight>(null);
+    const directionalLightRef = useRef<THREE.DirectionalLight>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera>(null);
 
     // Use the useHelper hook to attach CameraHelper to the camera
-    useHelper(spotLightRef as React.MutableRefObject<THREE.Object3D>, THREE.SpotLightHelper);
+    useHelper(directionalLightRef as React.MutableRefObject<THREE.Object3D>, THREE.DirectionalLightHelper, 2);
     useHelper(cameraRef as React.MutableRefObject<THREE.Object3D>, THREE.CameraHelper);
 
     return <>
         <OrbitControls />
         <axesHelper args={[2]} />
-        {/* Ambient light */}
-        <ambientLight intensity={.5} />
 
-        {/* Spotlight */}
-        <spotLight ref={spotLightRef} position={[10, 10, 10]} angle={0.15} intensity={1} />
+        {/* Light*/}
+        <ambientLight intensity={.3} />
+        <directionalLight
+            castShadow
+            ref={directionalLightRef}
+            position={_toArray({ ...directionalLightTemp })}
+            intensity={1} />
 
         {/* Camera and Camera Helper */}
-        <PerspectiveCamera ref={cameraRef} makeDefault position={[3, 3, 3]} />
+        <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 8, 9]} />
 
         <Ground />
-        {/* Your models or other components */}
-        {/* Replace <Gauges />, <Drum />, and <Model /> with your components */}
         <Gauges />
         <Drum position={[positionTemp.x, positionTemp.y, 0]} />
         <Model />
-
     </>
 }
 
+// TODO: move utils
+const _toArray = (obj: Coord3D): [number, number, number] => {
+    return [obj.x, obj.y, obj.z]
+};
+
 function App() {
-    return <Canvas style={{ background: "#222" }}>
+    return <Canvas shadows style={{ background: "#222" }}>
         <Experinace />
     </Canvas>
 }

@@ -1,17 +1,30 @@
 import { create } from 'zustand';
 
-interface Position {
+export interface Coord2D {
     x: number;
     y: number;
 }
 
+export interface Coord3D {
+    x: number;
+    y: number;
+    z: number;
+}
+
 interface InitBox {
-    position: Position;
+    position: Coord2D;
+}
+
+interface InitDirectionalLight {
+    position: Coord3D;
+    target: Coord3D;
 }
 
 interface State {
     initBox: InitBox;
     setInitBox: (coordTemp: InitBox) => void;
+    initDirectionalLight: InitDirectionalLight;
+    setInitDirectionalLight: (coordTemp: InitDirectionalLight) => void;
     saveCoord: () => void;
 }
 
@@ -19,6 +32,10 @@ const useCoord = create<State>((set, get) => {
     let initialCoord = {
         initBox: {
             position: { x: 1.2, y: 3 }
+        },
+        initDirectionalLight: {
+            position: { x: 0, y: 5, z: 4 },
+            target: { x: 0, y: 0, z: 0 },
         },
     };
     // check localStorage
@@ -37,6 +54,14 @@ const useCoord = create<State>((set, get) => {
         setInitBox: (newC: InitBox) => {
             set(() => ({
                 initBox: {
+                    ...newC,
+                },
+            }));
+        },
+        initDirectionalLight: initialCoord.initDirectionalLight,
+        setInitDirectionalLight: (newC: InitDirectionalLight) => {
+            set(() => ({
+                initDirectionalLight: {
                     ...newC,
                 },
             }));
