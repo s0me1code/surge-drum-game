@@ -9,7 +9,7 @@ import Gauges from './components/gauges/_gauge'
 import { Drum } from './components/drum'
 
 const Model = () => {
-    const { scene, nodes } = useGLTF('/public/models/scene.glb');
+    const { scene, nodes } = useGLTF('./models/scene.glb');
     // Apply a standard material to ensure it's affected by light
     scene.traverse((child: any) => {
         child.castShadow = true;
