@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
+import { Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
 import { useEffect, useRef } from 'react'
 import { useControls } from 'leva'
 import './App.css'
