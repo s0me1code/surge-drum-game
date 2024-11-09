@@ -101,7 +101,7 @@ const Experinace = () => {
 
     useFrame(() => {
         if (cameraRef.current) {
-            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
+//            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
         }
         if (directionalLightRef.current) {
             directionalLightRef.current.target.position.set(directionalLight.target.x, directionalLight.target.y, directionalLight.target.z)

@@ -1,3 +1,4 @@
+import { useControls } from 'leva';
 import { create } from 'zustand';
 
 export interface Coord2D {
@@ -46,7 +47,7 @@ const useCoord = create<State>((set, get) => {
         },
         initCamera : {
             position: { x: 0, y: 3, z: 7 },
-            target: { x: 0, y: 3, z: 0 },
+            target: { x: 0, y: 3.35, z: 0 },
         }
     };
     // check localStorage
