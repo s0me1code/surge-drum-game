@@ -1,51 +1,40 @@
-import { useControls } from 'leva';
 import { create } from 'zustand';
+import { Coord2D, Coord3D } from '../types';
 
-export interface Coord2D {
-    x: number;
-    y: number;
-}
-
-export interface Coord3D {
-    x: number;
-    y: number;
-    z: number;
-}
-
-interface InitBox {
+type IBox = {
     position: Coord2D;
 }
 
-interface InitDirectionalLight {
+type IDirectionalLight = {
     position: Coord3D;
     target: Coord3D;
 }
 
-interface InitCamera {
+type ICamera = {
     position: Coord3D;
     target: Coord3D;
 }
 
-interface State {
-    initBox: InitBox;
-    setInitBox: (coordTemp: InitBox) => void;
-    initDirectionalLight: InitDirectionalLight;
-    setInitDirectionalLight: (coordTemp: InitDirectionalLight) => void;
-    initCamera: InitCamera;
-    setInitCamera: (coordTemp: InitCamera) => void;
+type State = {
+    box: IBox;
+    setBox: (coordTemp: IBox) => void;
+    directionalLight: IDirectionalLight;
+    setDirectionalLight: (coordTemp: IDirectionalLight) => void;
+    camera: ICamera;
+    setCamera: (coordTemp: ICamera) => void;
     saveCoord: () => void;
 }
 
 const useCoord = create<State>((set, get) => {
     let initialCoord = {
-        initBox: {
+        box: {
             position: { x: 1.2, y: 3 }
         },
-        initDirectionalLight: {
+        directionalLight: {
             position: { x: -8, y: 12, z: 13 },
             target: { x: 0, y: 3, z: 0 },
         },
-        initCamera : {
+        camera: {
             position: { x: 0, y: 3, z: 7 },
             target: { x: 0, y: 3.35, z: 0 },
         }
@@ -63,26 +52,26 @@ const useCoord = create<State>((set, get) => {
     // set coord
     set(initialCoord);
     return {
-        initBox: initialCoord.initBox,
-        setInitBox: (newC: InitBox) => {
+        box: initialCoord.box,
+        setBox: (newC: IBox) => {
             set(() => ({
-                initBox: {
+                box: {
                     ...newC,
                 },
             }));
         },
-        initDirectionalLight: initialCoord.initDirectionalLight,
-        setInitDirectionalLight: (newC: InitDirectionalLight) => {
+        directionalLight: initialCoord.directionalLight,
+        setDirectionalLight: (newC: IDirectionalLight) => {
             set(() => ({
-                initDirectionalLight: {
+                directionalLight: {
                     ...newC,
                 },
             }));
         },
-        initCamera: initialCoord.initCamera,
-        setInitCamera: (newC: InitCamera) => {
+        camera: initialCoord.camera,
+        setCamera: (newC: ICamera) => {
             set(() => ({
-                initCamera: {
+                camera: {
                     ...newC,
                 },
             }));

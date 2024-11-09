@@ -1,12 +1,14 @@
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useControls } from 'leva'
 import './App.css'
-import { Coord3D, useCoord } from './state/coordinates'
+import { useCoord } from './state/coordinates.state'
 import Gauges from './components/gauges/_gauge'
 import { Drum } from './components/drum'
+import { _toArray } from './utils/_'
+import { LevaCoord } from './state/cootdinates.leve'
 
 const Model = () => {
     const { scene, nodes } = useGLTF('./models/scene.glb');
@@ -61,47 +63,14 @@ const Experinace = () => {
      * Coordinates
      * */
     const {
-        initBox, setInitBox,
-        initCamera, setInitCamera,
-        initDirectionalLight, setInitDirectionalLight,
-        saveCoord
+        box,
+        camera,
+        directionalLight
     } = useCoord()
-
-    const box = useControls("initBox", {
-        position: {
-            joystick: 'invertY',
-            value: { ...initBox.position },
-            step: 0.01,
-        }
-    })
-    const camera = useControls("Camera", {
-        position: {
-            joystick: 'invertY',
-            value: { ...initCamera.position },
-            step: 0.01,
-        },
-        target: {
-            joystick: 'invertY',
-            value: { ...initCamera.target },
-            step: 0.01,
-        },
-    })
-    const directionalLight = useControls("DirectionalLight", {
-        position: {
-            joystick: 'invertY',
-            value: { ...initDirectionalLight.position },
-            step: 0.01,
-        },
-        target: {
-            joystick: 'invertY',
-            value: { ...initDirectionalLight.target },
-            step: 0.01,
-        },
-    })
 
     useFrame(() => {
         if (cameraRef.current) {
-//            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
+            //            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
         }
         if (directionalLightRef.current) {
             directionalLightRef.current.target.position.set(directionalLight.target.x, directionalLight.target.y, directionalLight.target.z)
@@ -110,22 +79,6 @@ const Experinace = () => {
     })
 
     // to allow save current useControls coordinates
-    useEffect(() => {
-        const handleKeyDown = (event: any) => {
-            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-                event.preventDefault();
-                setInitBox(box)
-                setInitCamera(camera)
-                setInitDirectionalLight(directionalLight)
-                saveCoord();
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, );
-
     return <>
         <OrbitControls />
         <axesHelper args={[2]} />
@@ -146,15 +99,11 @@ const Experinace = () => {
 
         <Ground />
         <Gauges />
+        <LevaCoord />
         <Drum position={[box.position.x, box.position.y, 0]} />
         <Model />
     </>
 }
-
-// TODO: move utils
-const _toArray = (obj: Coord3D): [number, number, number] => {
-    return [obj.x, obj.y, obj.z]
-};
 
 function App() {
     return <Canvas shadows style={{ background: "#222" }}>
