@@ -2,13 +2,12 @@ import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
 import { useRef } from 'react'
-import { useControls } from 'leva'
 import './App.css'
 import { useCoord } from './state/coordinates.state'
 import Gauges from './components/gauges/_gauge'
 import { Drum } from './components/drum'
 import { _toArray } from './utils/_'
-import { LevaCoord } from './state/cootdinates.leve'
+import { LevaCoord } from './state/cootdinates.leva'
 
 const Model = () => {
     const { scene, nodes } = useGLTF('./models/scene.glb');
