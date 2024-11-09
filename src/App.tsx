@@ -45,27 +45,68 @@ function Ground() {
 }
 
 const Experinace = () => {
-    const { initBox, setInitBox,initDirectionalLight, setInitDirectionalLight, saveCoord} = useCoord()
-    const { positionTemp } = useControls("initBox", {
-        positionTemp: {
+    /**
+     * Refs
+     * */
+    const directionalLightRef = useRef<THREE.DirectionalLight>(null);
+    const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+
+    /**
+     * Helpers
+     * */
+    useHelper(directionalLightRef as React.MutableRefObject<THREE.Object3D>, THREE.DirectionalLightHelper, 2);
+    useHelper(cameraRef as React.MutableRefObject<THREE.Object3D>, THREE.CameraHelper);
+
+    /**
+     * Coordinates
+     * */
+    const {
+        initBox, setInitBox,
+        initCamera, setInitCamera,
+        initDirectionalLight, setInitDirectionalLight,
+        saveCoord
+    } = useCoord()
+
+    const box = useControls("initBox", {
+        position: {
             joystick: 'invertY',
             value: { ...initBox.position },
             step: 0.01,
         }
     })
-
-    console.log(initDirectionalLight)
-    const { directionalLightTemp, directionalLightTarget } = useControls("DirectionalLight", {
-        directionalLightTemp: {
+    const camera = useControls("Camera", {
+        position: {
+            joystick: 'invertY',
+            value: { ...initCamera.position },
+            step: 0.01,
+        },
+        target: {
+            joystick: 'invertY',
+            value: { ...initCamera.target },
+            step: 0.01,
+        },
+    })
+    const directionalLight = useControls("DirectionalLight", {
+        position: {
             joystick: 'invertY',
             value: { ...initDirectionalLight.position },
             step: 0.01,
         },
-        directionalLightTarget: {
+        target: {
             joystick: 'invertY',
             value: { ...initDirectionalLight.target },
             step: 0.01,
         },
+    })
+
+    useFrame(() => {
+        if (cameraRef.current) {
+            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
+        }
+        if (directionalLightRef.current) {
+            directionalLightRef.current.target.position.set(directionalLight.target.x, directionalLight.target.y, directionalLight.target.z)
+            directionalLightRef.current.target.updateMatrixWorld()
+        }
     })
 
     // to allow save current useControls coordinates
@@ -73,11 +114,9 @@ const Experinace = () => {
         const handleKeyDown = (event: any) => {
             if ((event.ctrlKey || event.metaKey) && event.key === 's') {
                 event.preventDefault();
-                setInitBox({ position: { ...positionTemp } })
-                setInitDirectionalLight({
-                    target: { ...directionalLightTarget },
-                    position: { ...directionalLightTemp }
-                })
+                setInitBox(box)
+                setInitCamera(camera)
+                setInitDirectionalLight(directionalLight)
                 saveCoord();
             }
         };
@@ -85,24 +124,7 @@ const Experinace = () => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [saveCoord, positionTemp, directionalLightTarget, directionalLightTemp]);
-
-    useFrame(() => {
-        if (cameraRef.current) {
-            //            cameraRef.current.lookAt(0, 3.5, 0);
-        }
-        if (directionalLightRef.current) {
-            directionalLightRef.current.target.position.set(directionalLightTarget.x, directionalLightTarget.y, directionalLightTarget.z)
-            directionalLightRef.current.target.updateMatrixWorld()
-        }
-    })
-
-    const directionalLightRef = useRef<THREE.DirectionalLight>(null);
-    const cameraRef = useRef<THREE.PerspectiveCamera>(null);
-
-    // Use the useHelper hook to attach CameraHelper to the camera
-    useHelper(directionalLightRef as React.MutableRefObject<THREE.Object3D>, THREE.DirectionalLightHelper, 2);
-    useHelper(cameraRef as React.MutableRefObject<THREE.Object3D>, THREE.CameraHelper);
+    }, );
 
     return <>
         <OrbitControls />
@@ -113,15 +135,18 @@ const Experinace = () => {
         <directionalLight
             castShadow
             ref={directionalLightRef}
-            position={_toArray({ ...directionalLightTemp })}
+            position={_toArray({ ...directionalLight.position })}
             intensity={1} />
 
         {/* Camera and Camera Helper */}
-        <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 8, 9]} />
+        <PerspectiveCamera
+            ref={cameraRef}
+            makeDefault
+            position={_toArray(camera.position)} />
 
         <Ground />
         <Gauges />
-        <Drum position={[positionTemp.x, positionTemp.y, 0]} />
+        <Drum position={[box.position.x, box.position.y, 0]} />
         <Model />
     </>
 }

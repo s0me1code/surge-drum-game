@@ -20,11 +20,18 @@ interface InitDirectionalLight {
     target: Coord3D;
 }
 
+interface InitCamera {
+    position: Coord3D;
+    target: Coord3D;
+}
+
 interface State {
     initBox: InitBox;
     setInitBox: (coordTemp: InitBox) => void;
     initDirectionalLight: InitDirectionalLight;
     setInitDirectionalLight: (coordTemp: InitDirectionalLight) => void;
+    initCamera: InitCamera;
+    setInitCamera: (coordTemp: InitCamera) => void;
     saveCoord: () => void;
 }
 
@@ -37,8 +44,13 @@ const useCoord = create<State>((set, get) => {
             position: { x: -8, y: 12, z: 13 },
             target: { x: 0, y: 3, z: 0 },
         },
+        initCamera : {
+            position: { x: 0, y: 3, z: 7 },
+            target: { x: 0, y: 3, z: 0 },
+        }
     };
     // check localStorage
+    // TODO: fix if you added and item it will give and undefined
     const storedState = localStorage.getItem('coord');
     if (storedState) {
         try {
@@ -62,6 +74,14 @@ const useCoord = create<State>((set, get) => {
         setInitDirectionalLight: (newC: InitDirectionalLight) => {
             set(() => ({
                 initDirectionalLight: {
+                    ...newC,
+                },
+            }));
+        },
+        initCamera: initialCoord.initCamera,
+        setInitCamera: (newC: InitCamera) => {
+            set(() => ({
+                initCamera: {
                     ...newC,
                 },
             }));
