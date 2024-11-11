@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Grid, OrbitControls, PerspectiveCamera, useGLTF, useHelper } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei'
 import { useRef } from 'react'
 import './App.css'
 import { useCoord } from './state/coordinates.state'
@@ -8,42 +8,9 @@ import Gauges from './components/gauges/_gauge'
 import { Drum } from './components/drum'
 import { _toArray } from './utils/_'
 import { LevaCoord } from './state/cootdinates.leva'
-
-const Model = () => {
-    const { scene, nodes } = useGLTF('./models/scene.glb');
-    // Apply a standard material to ensure it's affected by light
-    scene.traverse((child: any) => {
-        child.castShadow = true;
-        child.receiveShadow = true;
-
-        if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial({
-                color: child.material.color, // Retain original color if present
-                roughness: 0.5,
-                metalness: 0.5,
-            });
-        }
-    });
-    console.log(scene)
-    console.log(nodes)
-    return <primitive object={scene} scale={0.5} position={[0, 0, 0]} />;
-};
-
-function Ground() {
-    const gridConfig = {
-        cellSize: 0.5,
-        cellThickness: 0.5,
-        cellColor: '#6f6f6f',
-        sectionSize: 3,
-        sectionThickness: 1,
-        sectionColor: '#9d4b4b',
-        fadeDistance: 30,
-        fadeStrength: 1,
-        followCamera: false,
-        infiniteGrid: true
-    }
-    return <Grid position={[0, -0.01, 0]} args={[10.5, 10.5]} {...gridConfig} />
-}
+import { Ground } from './components/ground'
+import { Model } from './components/Model'
+import { Perf } from 'r3f-perf'
 
 const Experinace = () => {
     /**
@@ -69,7 +36,7 @@ const Experinace = () => {
 
     useFrame(() => {
         if (cameraRef.current) {
-            //            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
+            //cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
         }
         if (directionalLightRef.current) {
             directionalLightRef.current.target.position.set(directionalLight.target.x, directionalLight.target.y, directionalLight.target.z)
@@ -77,10 +44,11 @@ const Experinace = () => {
         }
     })
 
-    // to allow save current useControls coordinates
     return <>
         <OrbitControls />
+        <Perf position="top-left" />
         <axesHelper args={[2]} />
+        {/* <LevaCoord /> */}
 
         {/* Light*/}
         <ambientLight intensity={.3} />
@@ -90,7 +58,7 @@ const Experinace = () => {
             position={_toArray({ ...directionalLight.position })}
             intensity={1} />
 
-        {/* Camera and Camera Helper */}
+        {/* Camera */}
         <PerspectiveCamera
             ref={cameraRef}
             makeDefault
@@ -98,9 +66,8 @@ const Experinace = () => {
 
         <Ground />
         <Gauges />
-        <LevaCoord />
-        <Drum position={[box.position.x, box.position.y, 0]} />
         <Model />
+        <Drum position={[box.position.x, box.position.y, 0]} />
     </>
 }
 
