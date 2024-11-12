@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { damp } from 'maath/easing';
 import useGameStore from '../../state/game.state';
 import { Html, Text, useGLTF } from '@react-three/drei';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { GLTF } from 'three-stdlib'
 import '../../App.css'
 
@@ -41,30 +41,40 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * Game State
      * */
     const {
-        flowGauge,
-        levelGauge,
-        pressureGauge,
-        targetFlowGauge,
+        flow,
+        level,
+        pressure,
+        temp,
+        out,
+        targetFlow,
         rate,
-        generateRandomFlowGaugeTarget,
+        generateRandomFlowTarget,
         updateGauges,
     } = useGameStore();
 
+
+    /**
+     * Ref
+     * */
+    const levelRef = useRef<THREE.Mesh>(null)
+    const cyclicRef = useRef<THREE.Mesh>(null)
+
     useFrame((_, delta) => {
         const f = {
-            flowGauge,
-            levelGauge,
-            pressureGauge,
+            flow,
+            level,
+            pressure,
+            temp,
+            out,
         }
-        damp(f, "flowGauge", targetFlowGauge, 0.1, delta);
-        f.levelGauge = Math.min(95, Math.max(10, f.flowGauge / rate));
-        f.pressureGauge = f.levelGauge - 100;
-
+        damp(f, "flow", targetFlow, 0.1, delta);
+        if (levelRef && levelRef.current) levelRef.current.scale.y = 1
         updateGauges({ ...f });
 
         // ganerate only when close to target
-        if (Math.abs(f.flowGauge - targetFlowGauge) < 2) {
-            generateRandomFlowGaugeTarget();
+        if (Math.abs(f.flow - targetFlow) < 2) {
+            f.level = Math.min(95, Math.max(10, f.flow / rate));
+            generateRandomFlowTarget();
         }
     });
     useEffect(() => {
@@ -75,63 +85,37 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         <>
             <group>
                 <Html>
-                    {targetFlowGauge}<br />{flowGauge.toFixed(2)}
+                    {targetFlow}<br />{flow.toFixed(2)}
                 </Html>
             </group>
             <group {...props} scale={.5} dispose={null}>
                 <mesh
-                    castShadow
-                    receiveShadow
                     geometry={nodes.digitalIn.geometry}
                     material={nodes.digitalIn.material}
-                    position={[10.984, 16.187, -8.407]}
-                    rotation={[0, -1.571, 0]}
-                >
-                   <Text rotation-y={Math.PI / 2} position={[1,0,0]}>
-{levelGauge}
-                   </Text>
-                </mesh>
+                />
                 <mesh
-                    castShadow
-                    receiveShadow
                     geometry={nodes.digitalOut.geometry}
                     material={nodes.digitalOut.material}
-                    position={[-6.899, 1.141, -8.362]}
-                    rotation={[0, -1.571, 0]}
                 />
                 <mesh
-                    castShadow
-                    receiveShadow
+                    ref={levelRef}
                     geometry={nodes.level.geometry}
                     material={nodes.level.material}
-                    position={[12.887, 0.503, -7.865]}
-                    rotation={[0, -0.019, 0]}
-                    scale={[2.062, 4.092, 2.062]}
+                    position={[12.907, 0.474, -7.875]}
                 />
                 <mesh
-                    castShadow
-                    receiveShadow
                     geometry={nodes.levelMeasures.geometry}
                     material={nodes.levelMeasures.material}
-                    position={[12.9, 6.231, -8.537]}
-                    rotation={[0, -0.019, 0]}
-                    scale={2.062}
                 />
                 <mesh
-                    castShadow
-                    receiveShadow
+                    ref={cyclicRef}
                     geometry={nodes.cyclic.geometry}
                     material={nodes.cyclic.material}
-                    position={[1.856, 14.568, -8.608]}
-                    rotation={[0, -1.571, 0]}
+                    position={[1.856, 14.577, -8.634]}
                 />
                 <mesh
-                    castShadow
-                    receiveShadow
                     geometry={nodes.cyclicMesures.geometry}
                     material={nodes.cyclicMesures.material}
-                    position={[1.856, 14.568, -8.656]}
-                    rotation={[0, -1.571, 0]}
                 />
             </group>
         </>

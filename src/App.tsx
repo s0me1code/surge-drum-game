@@ -11,6 +11,7 @@ import { LevaCoord } from './state/cootdinates.leva'
 import { Ground } from './components/ground'
 import { Model } from './components/Model'
 import { Perf } from 'r3f-perf'
+import useGameStore from './state/game.state'
 
 const Experinace = () => {
     /**
@@ -72,9 +73,42 @@ const Experinace = () => {
 }
 
 function App() {
-    return <Canvas shadows style={{ background: "#222" }}>
-        <Experinace />
-    </Canvas>
+    /**
+     * Game State
+     * */
+    const {
+        flow,
+        level,
+        pressure,
+        temp,
+        out,
+        targetFlow,
+        rate,
+    } = useGameStore();
+
+    return <>
+        <div style={{
+            position: "absolute",
+            top: 0,
+            left: "50%",
+            height: "150px",
+            width: "300px",
+            background: "#ffffff22",
+            zIndex: 10,
+            flex: "row",
+        }}>
+            <div>flow:{flow}</div>
+            <div>level:{level}</div>
+            <div>pressure:{pressure}</div>
+            <div>temp:{temp}</div>
+            <div>out:{out}</div>
+            <div>targetFlow:{targetFlow}</div>
+            <div>rate:{rate}</div>
+        </div>
+        <Canvas shadows style={{ background: "#222" }}>
+            <Experinace />
+        </Canvas>
+    </>
 }
 
 export default App

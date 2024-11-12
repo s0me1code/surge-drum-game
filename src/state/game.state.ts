@@ -1,33 +1,36 @@
 import { create } from "zustand";
 
 type IUpdateGauges = {
-    flowGauge: number,
-    levelGauge: number,
-    pressureGauge: number,
+    flow: number,
+    level: number,
+    pressure: number,
+    temp: number,
+    out: number,
 }
-type IGameStore = {
-    flowGauge:number,
-    levelGauge:number,
-    pressureGauge:number,
-    targetFlowGauge:number,
-    rate:number,
-    generateRandomFlowGaugeTarget:()=>void,
-    updateGauges:(arg0:IUpdateGauges)=>void,
+type IGameStore = IUpdateGauges & {
+    targetFlow: number,
+    rate: number,
+    generateRandomFlowTarget: () => void,
+    updateGauges: (arg0: IUpdateGauges) => void,
 }
 
 const useGameStore = create<IGameStore>((set) => ({
-    flowGauge: 10,
-    levelGauge: 10,
-    pressureGauge: -90,
-    targetFlowGauge: 10,
+    flow: 10,
+    level: 10,
+    pressure: -90,
+    temp: 30,
+    out: 20,
+    targetFlow: 10,
     rate: 5,
-    generateRandomFlowGaugeTarget: () => set({
-        targetFlowGauge: Math.floor(Math.random() * 80) + 10,
+    generateRandomFlowTarget: () => set({
+        targetFlow: Math.floor(Math.random() * 300),
     }),
-    updateGauges: ({flowGauge,pressureGauge,levelGauge}) => set({
-        flowGauge,
-        levelGauge,
-        pressureGauge,
+    updateGauges: ({ flow, pressure, level, temp, out }:IUpdateGauges) => set({
+        flow,
+        level,
+        pressure,
+        temp,
+        out
     }),
 }));
 
