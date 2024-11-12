@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { GLTF } from 'three-stdlib'
 import '../../App.css'
 import { useControls } from 'leva';
+import { _between } from '../../utils/_';
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -39,24 +40,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     });
 
     /**
-     * Game State
-     * */
-    const {
-        flow,
-        level,
-        pressure,
-        temp,
-        out,
-        targetFlow,
-        rate,
-        generateRandomFlowTarget,
-        spaceDown,
-        setSpaceDown,
-        updateGauges,
-    } = useGameStore();
-
-
-    /**
      * Ref
      * */
     const levelRef = useRef<THREE.Mesh>(null)
@@ -66,47 +49,86 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     /**
      * Changeing rates
      * */
-    const { inRate} = useControls({
+    const { inRate } = useControls({
         inRate: {
-            value: 4,
+            value: .5,
             min: 0,
-            max: 10,
-            step: 1,
-        }
+            max: 2,
+            step: .1,
+        },
     })
+
+    /**
+     * Use Frame
+     * */
+    // GameStateInitials
+    let gameState = {
+        flow: 10,
+        targetFlow: 0,
+        level: 0,
+        out: 0,
+        pressure: 0,
+        temp: 0,
+        spaceDown: false
+    }
+    const generateRandomFlowTarget = () => Math.floor(Math.random() * flowConf.max)
+    // Configrations
+    const flowConf = { max: 300, min: 0, deltaRate: .4 }
+    const levelConf = { max: 100, min: 0, ratio: .05 }
+    const levelScaleConf = { max: 100, min: 0, deltaRate: .5 }
+    const outConf = { max: 200, min: 0, increaseRate: 10, deltaRate: .2, onPressEffect: .05 }
+    const times = { updateLevel: 1, randomFlow: 5 }
+    // UseFrameIintials
+    let lastUpdateTime = 0;
     useFrame((state, delta) => {
         const elapsedTime = state.clock.elapsedTime
-        const f = {
+        let {
             flow,
-            level,
-            pressure,
-            temp,
             out,
-        }
-        damp(f, "flow", targetFlow, inRate , delta * .5);
-        damp(f, "out", 0, .6, delta * .5);
-        f.level = (flow - out) / 20
-        if (levelRef && levelRef.current) levelRef.current.scale.y = 1
+            targetFlow,
+            spaceDown,
+            level,
+        } = gameState
+
+        /**
+         * Motion
+         * */
+        damp(gameState, "flow", targetFlow, inRate, delta * flowConf.deltaRate);
+        levelRef && levelRef.current &&
+            damp(levelRef.current.scale, "y", _between(level / levelConf.max, levelScaleConf.max, levelScaleConf.min), inRate, delta * levelScaleConf.deltaRate);
+        damp(gameState, "out", 0, inRate, delta * outConf.deltaRate);
+
+        /**
+         * Update State
+         * */
+        // one time
         if (spaceDown) {
-            console.log(spaceDown)
-            f.out = Math.min(200, out + 10)
-            setSpaceDown(false)
+            gameState.out = Math.min(outConf.max, out + outConf.increaseRate)
+            console.log(gameState.out)
+            gameState.spaceDown = false
+            const levelT = level + - (out / levelConf.ratio) * outConf.onPressEffect
+            gameState.level = _between(levelT, levelConf.max, levelConf.min)
         }
-        //updateGauges({ ...f })
-        // ganerate every 5 sec
-        if (elapsedTime % 5 < delta) {
-            f.level = Math.min(95, Math.max(10, f.flow / rate));
-            generateRandomFlowTarget();
+        // every 1 sec
+        if (elapsedTime - lastUpdateTime >= times.updateLevel) {
+            lastUpdateTime = elapsedTime;
+            const levelT = level + (flow - out) / levelConf.ratio
+            gameState.level = _between(levelT, levelConf.max, levelConf.min)
+            // every 5 sec
+            if (Math.floor(elapsedTime) % times.randomFlow === 0) {
+                gameState.targetFlow = generateRandomFlowTarget();
+            }
+            console.log(gameState)
         }
+
     });
 
     useEffect(() => {
         console.log(nodes)
         const handleKeyDown = (event: any) => {
-            if (event.key === ' ' || event.code === 'Space') {
+            if (event.key === ' ' || event.key === 'a') {
                 event.preventDefault();
-                console.log(spaceDown)
-                setSpaceDown(true)
+                gameState.spaceDown = true
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -117,11 +139,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
 
     return (
         <>
-            <group>
-                <Html>
-                    {targetFlow}<br />{flow.toFixed(2)}
-                </Html>
-            </group>
             <group {...props} scale={.5} dispose={null}>
                 <mesh
                     geometry={nodes.digitalIn.geometry}
