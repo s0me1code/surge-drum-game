@@ -87,6 +87,9 @@ function App() {
     } = useGameStore();
 
     return <>
+        <Canvas shadows style={{ background: "#222" }}>
+            <Experinace />
+        </Canvas>
         <div style={{
             position: "absolute",
             top: 0,
@@ -94,20 +97,17 @@ function App() {
             height: "150px",
             width: "300px",
             background: "#ffffff22",
-            zIndex: 10,
+            zIndex: 1,
             flex: "row",
         }}>
-            <div>flow:{flow}</div>
-            <div>level:{level}</div>
-            <div>pressure:{pressure}</div>
-            <div>temp:{temp}</div>
-            <div>out:{out}</div>
+            <div>flow:{flow.toFixed(2)}</div>
+            <div>level:{level.toFixed(2)}</div>
+            <div>pressure:{pressure.toFixed(2)}</div>
+            <div>temp:{temp.toFixed(2)}</div>
+            <div>out:{out?.toFixed(2)}</div>
             <div>targetFlow:{targetFlow}</div>
             <div>rate:{rate}</div>
         </div>
-        <Canvas shadows style={{ background: "#222" }}>
-            <Experinace />
-        </Canvas>
     </>
 }
 

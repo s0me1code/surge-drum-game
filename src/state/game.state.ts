@@ -11,6 +11,8 @@ type IGameStore = IUpdateGauges & {
     targetFlow: number,
     rate: number,
     generateRandomFlowTarget: () => void,
+    spaceDown: boolean,
+    setSpaceDown: (spaceDown:boolean) => void,
     updateGauges: (arg0: IUpdateGauges) => void,
 }
 
@@ -22,10 +24,12 @@ const useGameStore = create<IGameStore>((set) => ({
     out: 20,
     targetFlow: 10,
     rate: 5,
+    spaceDown: false,
     generateRandomFlowTarget: () => set({
         targetFlow: Math.floor(Math.random() * 300),
     }),
-    updateGauges: ({ flow, pressure, level, temp, out }:IUpdateGauges) => set({
+    setSpaceDown: (spaceDown) => set({ spaceDown}),
+    updateGauges: ({ flow, pressure, level, temp, out }: IUpdateGauges) => set({
         flow,
         level,
         pressure,
