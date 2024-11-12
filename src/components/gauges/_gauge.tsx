@@ -49,14 +49,14 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     /**
      * Changeing rates
      * */
-    const { inRate } = useControls({
-        inRate: {
-            value: .5,
-            min: 0,
-            max: 2,
-            step: .1,
-        },
-    })
+    // const { inRate } = useControls({
+    //     inRate: {
+    //         value: .5,
+    //         min: 0,
+    //         max: 2,
+    //         step: .1,
+    //     },
+    // })
 
     /**
      * Use Frame
@@ -78,6 +78,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const levelScaleConf = { max: 100, min: 0, deltaRate: .5 }
     const outConf = { max: 200, min: 0, increaseRate: 10, deltaRate: .2, onPressEffect: .05 }
     const times = { updateLevel: 1, randomFlow: 5 }
+    const motion = {smooth: .5}
     // UseFrameIintials
     let lastUpdateTime = 0;
     useFrame((state, delta) => {
@@ -93,10 +94,10 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         /**
          * Motion
          * */
-        damp(gameState, "flow", targetFlow, inRate, delta * flowConf.deltaRate);
+        damp(gameState, "flow", targetFlow, motion.smooth, delta * flowConf.deltaRate);
         levelRef && levelRef.current &&
-            damp(levelRef.current.scale, "y", _between(level / levelConf.max, levelScaleConf.max, levelScaleConf.min), inRate, delta * levelScaleConf.deltaRate);
-        damp(gameState, "out", 0, inRate, delta * outConf.deltaRate);
+            damp(levelRef.current.scale, "y", _between(level / levelConf.max, levelScaleConf.max, levelScaleConf.min), motion.smooth, delta * levelScaleConf.deltaRate);
+        damp(gameState, "out", 0, motion.smooth, delta * outConf.deltaRate);
 
         /**
          * Update State
