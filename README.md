@@ -1,12 +1,13 @@
 # Steps:
 
-[x] setup
-[] logic / game.state
-    - flow-rate
-    - level-gauge
-    - pressure-gauge
-    - lcv-gauge
-    - thermo.
-[] gauges
-[] 3D objects
-[] characters
+- [x] setup
+- [] gauges
+  - [x] flow-rate
+  - [x] level-gauge
+  - [x] lcv-gauge
+  - [] pressure-gauge
+  - [] thermo.
+- [] loss condition
+- [] scoure
+- [] 3D objects
+- [] characters

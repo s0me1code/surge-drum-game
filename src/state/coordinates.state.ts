@@ -35,8 +35,8 @@ const useCoord = create<State>((set, get) => {
             target: { x: 0, y: 3, z: 0 },
         },
         camera: {
-            position: { x: 0, y: 3, z: 7 },
-            target: { x: 0, y: 3.35, z: 0 },
+            position: { x: 1, y: 3, z: 7 },
+            target: { x: 1, y: 3.35, z: 0 },
         }
     };
     // check localStorage

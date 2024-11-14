@@ -7,11 +7,10 @@ import { useCoord } from './state/coordinates.state'
 import Gauges from './components/gauges/_gauge'
 import { Drum } from './components/drum'
 import { _toArray } from './utils/_'
-import { LevaCoord } from './state/cootdinates.leva'
+// import { LevaCoord } from './state/cootdinates.leva'
 import { Ground } from './components/ground'
 import { Model } from './components/Model'
 import { Perf } from 'r3f-perf'
-import useGameStore from './state/game.state'
 
 const Experinace = () => {
     /**
@@ -37,7 +36,7 @@ const Experinace = () => {
 
     useFrame(() => {
         if (cameraRef.current) {
-            //cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
+            cameraRef.current.lookAt(camera.target.x, camera.target.y, camera.target.z)
         }
         if (directionalLightRef.current) {
             directionalLightRef.current.target.position.set(directionalLight.target.x, directionalLight.target.y, directionalLight.target.z)
@@ -73,41 +72,10 @@ const Experinace = () => {
 }
 
 function App() {
-    /**
-     * Game State
-     * */
-    const {
-        flow,
-        level,
-        pressure,
-        temp,
-        out,
-        targetFlow,
-        rate,
-    } = useGameStore();
-
     return <>
         <Canvas shadows style={{ background: "#222" }}>
             <Experinace />
         </Canvas>
-        <div style={{
-            position: "absolute",
-            top: 0,
-            left: "50%",
-            height: "150px",
-            width: "300px",
-            background: "#ffffff22",
-            zIndex: 1,
-            flex: "row",
-        }}>
-            <div>flow:{flow.toFixed(2)}</div>
-            <div>level:{level.toFixed(2)}</div>
-            <div>pressure:{pressure.toFixed(2)}</div>
-            <div>temp:{temp.toFixed(2)}</div>
-            <div>out:{out?.toFixed(2)}</div>
-            <div>targetFlow:{targetFlow}</div>
-            <div>rate:{rate}</div>
-        </div>
     </>
 }
 
