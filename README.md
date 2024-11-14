@@ -7,7 +7,28 @@
   - [x] lcv-gauge
   - [] pressure-gauge
   - [] thermo.
+- [] measures
+  - [] level
+  - [] prussure
+- [] score
+  - [] time
+  - [] edge points
 - [] loss condition
-- [] scoure
+  - [] high
+  - [] down
+  - [] after 1 min remove onPressRate
+- [] dashboard
+  - [] setup
+  - [] form
+  - [] table
+- [] intro
+  - [] count
+  - [] instructions
 - [] 3D objects
+  - [] mesh
+  - [] materials
+  - [] packing
 - [] characters
+  - [] difficulty
+  - [] drows
+  - [] animate hand
