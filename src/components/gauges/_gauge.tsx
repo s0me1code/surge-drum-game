@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { MeshProps, useFrame } from '@react-three/fiber';
 import { damp } from 'maath/easing';
-import { Text, useGLTF } from '@react-three/drei';
+import { Line, LineProps, Text, useGLTF } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
-import { GLTF } from 'three-stdlib'
+import { GLTF, Line2 } from 'three-stdlib'
 import '../../App.css'
 import { _between } from '../../utils/_';
 
@@ -59,14 +59,14 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * */
     const flowConf = { max: 300, min: 0, deltaRate: .4 }
     const levelConf = { max: 100, min: 0, ratio: .05 }
-    const levelScaleConf = { max: 100, min: 0, deltaRate: .5 }
+    const levelScaleConf = { max: 1, min: 0, deltaRate: .5 }
     const outConf = { max: 200, min: 0, increaseRate: 10, deltaRate: .2, onPressEffect: .05 }
     const pressureConf = { max: 400, min: 0, ratio: .05 }
-    const pressureRotationConf = { max: 360, min: 0, deltaRate: .5 }
+    const pressureRotationConf = { max: 2 * Math.PI, min: 0, deltaRate: .5 }
     type IGenerateP = { level: number, flow: number, temp: number }
     const generatePressureRatios: IGenerateP = { level: 1.8, flow: .5, temp: 3 }
     const tempConf = { max: 50, min: 20, deltaRate: .5 }
-    const tempScaleConf = { max: 100, min: 0, deltaRate: .5 }
+    const tempScaleConf = { max: 1, min: 0, deltaRate: .5 }
     const times = { every1: 1, every5: 5, every15: 15 }
     const motion = { smooth: .5 }
     const textProps: MeshProps & { [key: string]: any } = {
@@ -79,6 +79,39 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         lineHeight: 1,
         'material-toneMapped': false
     }
+    const levelCapConf = {
+        max:
+            nodes.levelMeasures.geometry.boundingBox ? nodes.levelMeasures.geometry.boundingBox.max.y : 0,
+        min: 0,
+    }
+    const _levelCapProps: LineProps = {
+        points: [
+            [0, 0, .1],
+            [1, 0, .1],
+        ],
+        color: "red",
+        lineWidth: 2,
+        dashed: false,
+    }
+    const levelCapProps: { top: LineProps, bottom: LineProps } = {
+        top: {
+            ..._levelCapProps,
+            position: nodes.levelMeasures.geometry.boundingBox ?
+                //[0, nodes.levelMeasures.geometry.boundingBox.max.y, 0]
+                [0, 12, 0]
+                : [0, 0, 0]
+        },
+        bottom: {
+            ..._levelCapProps,
+            position: nodes.levelMeasures.geometry.boundingBox ?
+                [0, nodes.levelMeasures.geometry.boundingBox.min.y, 0]
+                : [0, 0, 0]
+        },
+    }
+    const lossConditions = {
+        pressure: 340,
+        level: 10,
+    }
 
     /**
      * Ref
@@ -90,6 +123,10 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const pressureTextRef = useRef<THREE.Mesh>(null)
     const tempRef = useRef<THREE.Mesh>(null)
     const tempTextRef = useRef<THREE.Mesh>(null)
+    const levelCapTopRef = useRef<Line2>(null)
+    const levelCapBottomRef = useRef<Line2>(null)
+    const lossConditionsTextRef = useRef<THREE.Mesh>(null)
+
 
     /**
      * Use Frame
@@ -101,19 +138,28 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         level: 0,
         out: 0,
         pressure: 0,
-        targetPressure: 400,
-        temp: 2 * 25,
-        spaceDown: false
+        targetPressure: 0,
+        temp: 0,
+        spaceDown: false,
+        levelCapTop: levelConf.max,
+        levelCapBottom: levelConf.min,
     }
     const generateRandomFlowTarget = () => Math.floor(Math.random() * flowConf.max)
-    const generatePressureTarget = ({ level, flow, temp }: typeof generatePressureRatios) =>
-        (generatePressureRatios.level * level + generatePressureRatios.flow * flow + generatePressureRatios.temp * temp)
+    const calculatePressureTarget = ({ level, flow, temp }: typeof generatePressureRatios) =>
+        _between((generatePressureRatios.level * level + generatePressureRatios.flow * flow + generatePressureRatios.temp * temp), pressureConf.max, pressureConf.min)
     const generateRandomTemp = () => tempConf.min + Math.floor(Math.random() * (tempConf.max - tempConf.min))
+    const calculateLevelCapTop = ({ targetFlow, temp }: { [key: string]: number }) =>
+        ((lossConditions.pressure - generatePressureRatios.flow * targetFlow - generatePressureRatios.temp * temp) / generatePressureRatios.level)
+    const convertLevelToYPoint = (level: number, maxLevel: number, maxY: number) => _between((level * maxY * 1 / maxLevel), levelCapConf.max, levelCapConf.min)
+    let lost = false
     // UseFrameIintials
     let lastUpdateTime = 0;
     let init = true;
     useFrame((state, delta) => {
         const elapsedTime = state.clock.elapsedTime
+        if (elapsedTime > 3 && lost) {
+            return
+        }
         let {
             flow,
             out,
@@ -123,8 +169,17 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             pressure,
             targetPressure,
             temp,
+            levelCapTop,
         } = gameState
 
+        // if (elapsedTime > 8 &&
+        //     (pressure >= lossConditions.pressure ||
+        //         level < lossConditions.level
+        //     )
+        // ) {
+        //     lost = true
+        //     return
+        // }
         /**
          * Visuals
          * */
@@ -142,7 +197,11 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             damp(tempRef.current.scale, "y", _between(temp / tempConf.max, tempScaleConf.max, tempScaleConf.min), motion.smooth, delta * tempScaleConf.deltaRate);
         if (tempTextRef.current)
             (tempTextRef.current as any).text = String(temp.toFixed(0)).padStart(2, '0');
+        const levelAsYPoint = convertLevelToYPoint(levelCapTop, levelConf.max, levelCapConf.max)
+        levelCapTopRef.current &&
+            damp(levelCapTopRef.current.position, "y", levelAsYPoint, motion.smooth, delta * levelScaleConf.deltaRate)
 
+        levelRef.current && levelRef.current.scale.y < lossConditions.level / levelConf.max && console.log(lossConditions.level / levelConf.max)
         /**
          * Update State
          * */
@@ -152,7 +211,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         // one time
         if (init) {
             gameState.targetFlow = generateRandomFlowTarget();
-            gameState.targetPressure = generatePressureTarget({ level, flow, temp });
+            gameState.targetPressure = calculatePressureTarget({ level, flow, temp });
             gameState.temp = generateRandomTemp()
             init = false
         }
@@ -167,10 +226,12 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             lastUpdateTime = elapsedTime;
             const levelT = level + (flow - out) / levelConf.ratio
             gameState.level = _between(levelT, levelConf.max, levelConf.min)
+            gameState.levelCapTop = calculateLevelCapTop({ targetFlow, temp })
+
             // every 5 sec
             if (Math.floor(elapsedTime) % times.every5 === 0) {
                 gameState.targetFlow = generateRandomFlowTarget();
-                gameState.targetPressure = generatePressureTarget({ level, flow, temp });
+                gameState.targetPressure = calculatePressureTarget({ level, flow, temp });
             }
             // every 15 sec
             if (Math.floor(elapsedTime) % times.every15 === 0) {
@@ -228,8 +289,18 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 <mesh
                     geometry={nodes.levelMeasures.geometry}
                     material={nodes.levelMeasures.material}
-                    position={[12.469, 6.231, -7.879]}
-                />
+                    position={[12.469, 0.463, -7.879]}
+                >
+                    <Line
+                        {...levelCapProps.top}
+                        ref={levelCapTopRef}
+                    />
+                    <Line
+                        {...levelCapProps.bottom}
+                        position={[0, convertLevelToYPoint(lossConditions.level, levelConf.max, levelCapConf.max), 0]}
+                        ref={levelCapBottomRef}
+                    />
+                </mesh>
                 <mesh
                     ref={pressureRef}
                     geometry={nodes.cyclic.geometry}
@@ -260,6 +331,11 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                     {...textProps}
                     position={[-6.77, 5.144, -7.875 + .1]}
                     ref={tempTextRef}
+                    children={""}
+                />
+                <Text
+                    {...textProps}
+                    ref={lossConditionsTextRef}
                     children={""}
                 />
             </group>
