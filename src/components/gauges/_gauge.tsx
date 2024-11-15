@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { MeshProps, useFrame, useThree } from '@react-three/fiber';
+import { MeshProps, useFrame } from '@react-three/fiber';
 import { damp } from 'maath/easing';
 import { Text, useGLTF } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
