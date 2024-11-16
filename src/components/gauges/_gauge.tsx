@@ -60,9 +60,9 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * */
     // GaugesConf
     const flowConf = { max: 300, min: 0, deltaRate: .4 }
-    const levelConf = { max: 100, min: 0, ratio: .05 }
+    const levelConf = { max: 100, min: 0, ratio: 20 }
     const levelScaleConf = { max: 1, min: 0, deltaRate: .5 }
-    const outConf = { max: 200, min: 0, increaseRate: 10, deltaRate: .2, onPressEffect: .05 }
+    const outConf = { max: 200, min: 0, increaseRate: 10, deltaRate: .2, onPressEffect: .1 }
     const pressureConf = { max: 400, min: 0, ratio: .05 }
     const pressureRotationConf = { max: 2 * Math.PI, min: 0, deltaRate: .5 }
     type IGenerateP = { level: number, flow: number, temp: number }
