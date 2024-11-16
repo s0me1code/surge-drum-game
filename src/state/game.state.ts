@@ -1,41 +1,19 @@
 import { create } from "zustand";
 
-type IUpdateGauges = {
-    flow: number,
-    level: number,
-    pressure: number,
-    temp: number,
-    out: number,
-}
-type IGameStore = IUpdateGauges & {
-    targetFlow: number,
-    rate: number,
-    generateRandomFlowTarget: () => void,
-    spaceDown: boolean,
-    setSpaceDown: (spaceDown:boolean) => void,
-    updateGauges: (arg0: IUpdateGauges) => void,
+type IGameStore = {
+    lost: boolean,
+    elapsedTime: number,
+    flowVariances: number,
+    setLost: (lost: boolean) => void,
+    setScore: (arg0: { elapsedTime: number, flowVariances: number }) => void,
 }
 
 const useGameStore = create<IGameStore>((set) => ({
-    flow: 10,
-    level: 10,
-    pressure: -90,
-    temp: 30,
-    out: 20,
-    targetFlow: 10,
-    rate: 5,
-    spaceDown: false,
-    generateRandomFlowTarget: () => set({
-        targetFlow: Math.floor(Math.random() * 300),
-    }),
-    setSpaceDown: (spaceDown) => set({ spaceDown}),
-    updateGauges: ({ flow, pressure, level, temp, out }: IUpdateGauges) => set({
-        flow,
-        level,
-        pressure,
-        temp,
-        out
-    }),
+    lost: false,
+    elapsedTime: 0,
+    flowVariances: 1,
+    setLost: (lost) => set({ lost }),
+    setScore: ({ elapsedTime, flowVariances }) => set({ elapsedTime, flowVariances })
 }));
 
 export default useGameStore;

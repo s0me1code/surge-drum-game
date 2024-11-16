@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { GLTF, Line2 } from 'three-stdlib'
 import '../../App.css'
 import { _between } from '../../utils/_';
+import useGameStore from '../../state/game.state';
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -23,7 +24,7 @@ type GLTFResult = GLTF & {
 
 const Gauges = (props: JSX.IntrinsicElements['group']) => {
     /**
-     * gltf
+     * GLTF
      * */
     const _material = new THREE.MeshStandardMaterial({
         roughness: 0.5,
@@ -57,6 +58,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     /**
      * Config
      * */
+    // GaugesConf
     const flowConf = { max: 300, min: 0, deltaRate: .4 }
     const levelConf = { max: 100, min: 0, ratio: .05 }
     const levelScaleConf = { max: 1, min: 0, deltaRate: .5 }
@@ -67,8 +69,10 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const generatePressureRatios: IGenerateP = { level: 1.8, flow: .5, temp: 3 }
     const tempConf = { max: 50, min: 20, deltaRate: .5 }
     const tempScaleConf = { max: 1, min: 0, deltaRate: .5 }
+    // useFrameConf
     const times = { every1: 1, every5: 5, every15: 15 }
     const motion = { smooth: .5 }
+    // visualsConf
     const textProps: MeshProps & { [key: string]: any } = {
         scale: [1 / 4, 1 / 2, 1],
         position: [0, -0.03, .01],
@@ -108,10 +112,16 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 : [0, 0, 0]
         },
     }
+    // lossConf
     const lossConditions = {
         pressure: 340,
         level: 10,
+        timeOver: 6,
+        onPressEffectRatio: .02,
     }
+    const gameStartedElapsedTime = 8
+    // socre
+    let flowVariances = 1
 
     /**
      * Ref
@@ -127,11 +137,11 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const levelCapBottomRef = useRef<Line2>(null)
     const lossConditionsTextRef = useRef<THREE.Mesh>(null)
 
-
     /**
      * Use Frame
      * */
     // GameStateInitials
+    let { lost, setLost, setScore } = useGameStore()
     let gameState = {
         flow: 0,
         targetFlow: 0,
@@ -151,13 +161,12 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const calculateLevelCapTop = ({ targetFlow, temp }: { [key: string]: number }) =>
         ((lossConditions.pressure - generatePressureRatios.flow * targetFlow - generatePressureRatios.temp * temp) / generatePressureRatios.level)
     const convertLevelToYPoint = (level: number, maxLevel: number, maxY: number) => _between((level * maxY * 1 / maxLevel), levelCapConf.max, levelCapConf.min)
-    let lost = false
     // UseFrameIintials
     let lastUpdateTime = 0;
     let init = true;
     useFrame((state, delta) => {
         const elapsedTime = state.clock.elapsedTime
-        if (elapsedTime > 3 && lost) {
+        if (elapsedTime > gameStartedElapsedTime && lost) {
             return
         }
         let {
@@ -171,15 +180,26 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             temp,
             levelCapTop,
         } = gameState
+        // lossCondition
+        if (elapsedTime > gameStartedElapsedTime &&
+            (
+                pressure >= lossConditions.pressure ||
+                (levelRef.current && levelRef.current.scale.y < lossConditions.level / levelConf.max)
+            )
+        ) {
+            setLost(true)
+            setScore({
+                elapsedTime,
+                flowVariances
+            })
+            console.log({
+                lost,
+                elapsedTime,
+                flowVariances,
+            })
+            return
+        }
 
-        // if (elapsedTime > 8 &&
-        //     (pressure >= lossConditions.pressure ||
-        //         level < lossConditions.level
-        //     )
-        // ) {
-        //     lost = true
-        //     return
-        // }
         /**
          * Visuals
          * */
@@ -201,13 +221,14 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         levelCapTopRef.current &&
             damp(levelCapTopRef.current.position, "y", levelAsYPoint, motion.smooth, delta * levelScaleConf.deltaRate)
 
-        levelRef.current && levelRef.current.scale.y < lossConditions.level / levelConf.max && console.log(lossConditions.level / levelConf.max)
         /**
          * Update State
          * */
         damp(gameState, "flow", targetFlow, motion.smooth, delta * flowConf.deltaRate);
         damp(gameState, "pressure", targetPressure, motion.smooth, delta * flowConf.deltaRate);
         damp(gameState, "out", 0, motion.smooth, delta * outConf.deltaRate);
+        elapsedTime > lossConditions.timeOver &&
+            damp(outConf, "onPressEffect", 0, motion.smooth, delta * lossConditions.onPressEffectRatio)
         // one time
         if (init) {
             gameState.targetFlow = generateRandomFlowTarget();
@@ -227,10 +248,11 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             const levelT = level + (flow - out) / levelConf.ratio
             gameState.level = _between(levelT, levelConf.max, levelConf.min)
             gameState.levelCapTop = calculateLevelCapTop({ targetFlow, temp })
-
             // every 5 sec
             if (Math.floor(elapsedTime) % times.every5 === 0) {
-                gameState.targetFlow = generateRandomFlowTarget();
+                const newFlow = generateRandomFlowTarget();
+                flowVariances += Math.abs(targetFlow - newFlow)
+                gameState.targetFlow = newFlow;
                 gameState.targetPressure = calculatePressureTarget({ level, flow, temp });
             }
             // every 15 sec
@@ -238,7 +260,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 gameState.temp = generateRandomTemp()
             }
         }
-
     });
 
     useEffect(() => {
@@ -339,7 +360,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                     children={""}
                 />
             </group>
-
         </>
     );
 };
