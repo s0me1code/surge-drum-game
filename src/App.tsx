@@ -29,7 +29,6 @@ const Experinace = () => {
      * Coordinates
      * */
     const {
-        box,
         camera,
         directionalLight
     } = useCoord()
