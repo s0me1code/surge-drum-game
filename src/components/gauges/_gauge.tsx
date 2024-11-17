@@ -281,7 +281,8 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 <mesh
                     geometry={nodes.digitalIn.geometry}
                     material={nodes.digitalIn.material}
-                    position={[10.984, 16.551, -7.627]}
+                    position={[15.987, 21.217, -12.511]}
+                    scale={1.2}
                 >
                     <Text
                         {...textProps}
@@ -292,7 +293,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 <mesh
                     geometry={nodes.digitalOut.geometry}
                     material={nodes.digitalOut.material}
-                    position={[-6.899, 1.505, -7.583]}
+                    position={[-9.482, 1.528, 1.196]}
                 >
                     <Text
                         {...textProps}
@@ -305,12 +306,12 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                     geometry={nodes.level.geometry}
                     material={nodes.level.material}
                     scale={[1, 0, 1]}
-                    position={[12.907, 0.474, -7.875]}
+                    position={[12.719, 1.369, 0.761]}
                 />
                 <mesh
                     geometry={nodes.levelMeasures.geometry}
                     material={nodes.levelMeasures.material}
-                    position={[12.469, 0.463, -7.879]}
+                    position={[12.282, 1.358, 0.758]}
                 >
                     <Line
                         {...levelCapProps.top}
@@ -326,13 +327,13 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                     ref={pressureRef}
                     geometry={nodes.cyclic.geometry}
                     material={nodes.cyclic.material}
-                    position={[1.856, 14.577, -8.634]}
+                    position={[1.856, 14.852, -6.101]}
                     rotation={[Math.PI, 0, 0]}
                 />
                 <mesh
                     geometry={nodes.cyclicMesures.geometry}
                     material={nodes.cyclicMesures.material}
-                    position={[1.856, 14.568, -8.746]}
+                    position={[1.856, 14.843, -6.213]}
                 >
                     <Text
                         {...textProps}
@@ -345,12 +346,12 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                     ref={tempRef}
                     geometry={nodes.temp.geometry}
                     material={nodes.temp.material}
-                    position={[-6.77, 5.144, -7.875]}
+                    position={[-10.772, 4.55, 0.903]}
                 >
                 </mesh>
                 <Text
                     {...textProps}
-                    position={[-6.77, 5.144, -7.875 + .1]}
+                    position={[-10.772, 4.55, 0.903+1]}
                     ref={tempTextRef}
                     children={""}
                 />

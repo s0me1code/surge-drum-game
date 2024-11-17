@@ -68,14 +68,13 @@ const Experinace = () => {
         <Ground />
         <Gauges />
         <Model />
-        <Drum position={[box.position.x, box.position.y, 0]} />
     </>
 }
 
 function App() {
     return <>
         <Overlay/>
-        <Canvas shadows style={{ background: "#222" }}>
+        <Canvas shadows style={{ background: "#222" }} camera={{far:1}}>
             <Experinace />
         </Canvas>
     </>
