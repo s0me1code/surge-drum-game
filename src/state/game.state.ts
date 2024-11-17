@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type IGameStore = {
+    count: number,
     lost: boolean,
     elapsedTime: number,
     flowVariances: number,
@@ -9,6 +10,7 @@ type IGameStore = {
 }
 
 const useGameStore = create<IGameStore>((set) => ({
+    count: 5,
     lost: false,
     elapsedTime: 0,
     flowVariances: 1,

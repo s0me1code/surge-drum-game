@@ -1,21 +1,3 @@
 #root {
   margin: 0 auto;
 }
-
-.content {
-  width: 334px;
-  height: 216px;
-  background: #000;
-  border-radius: 3px;
-  overflow-y: auto;
-  padding: 0;
-}
-
-.wrapper {
-  padding: 10px;
-  width: 668px;
-  height: 432px;
-  transform: scale(0.5);
-  transform-origin: top left;
-}
-

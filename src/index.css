@@ -1,1 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 html,body,#root {height:100%;margin:unset;}
+@font-face {
+  font-family: 'IBM BIOS';
+  src: url('/WebPlus_IBM_BIOS.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

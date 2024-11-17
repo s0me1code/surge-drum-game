@@ -11,6 +11,7 @@ import { _toArray } from './utils/_'
 import { Ground } from './components/ground'
 import { Model } from './components/Model'
 import { Perf } from 'r3f-perf'
+import { Overlay } from './components/overlay/Overlay'
 
 const Experinace = () => {
     /**
@@ -73,6 +74,7 @@ const Experinace = () => {
 
 function App() {
     return <>
+        <Overlay/>
         <Canvas shadows style={{ background: "#222" }}>
             <Experinace />
         </Canvas>
