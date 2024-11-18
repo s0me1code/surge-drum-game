@@ -1,12 +1,25 @@
 import { create } from "zustand";
 
+export enum ILostReasons {
+    HP = "high pressure",
+    LL = "low level"
+};
+type IGauges = {
+    flow: number,
+    level: number,
+    pressure: number,
+    temp: number,
+    out: number,
+}
 type IGameStore = {
     count: number,
     lost: boolean,
+    lostResoan?: ILostReasons,
     elapsedTime: number,
     flowVariances: number,
+    gauges: IGauges,
     setLost: (lost: boolean) => void,
-    setScore: (arg0: { elapsedTime: number, flowVariances: number }) => void,
+    setScore: (arg0: { gauges: IGauges, lostResoan: ILostReasons, elapsedTime: number, flowVariances: number }) => void,
 }
 
 const useGameStore = create<IGameStore>((set) => ({
@@ -14,8 +27,15 @@ const useGameStore = create<IGameStore>((set) => ({
     lost: false,
     elapsedTime: 0,
     flowVariances: 1,
+    gauges: {
+        flow: 0,
+        level: 0,
+        pressure: 0,
+        temp: 0,
+        out: 0,
+    },
     setLost: (lost) => set({ lost }),
-    setScore: ({ elapsedTime, flowVariances }) => set({ elapsedTime, flowVariances })
+    setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set({ gauges, elapsedTime, flowVariances, lostResoan })
 }));
 
 export default useGameStore;

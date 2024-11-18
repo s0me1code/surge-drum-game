@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { GLTF, Line2 } from 'three-stdlib'
 import '../../App.css'
 import { _between } from '../../utils/_';
-import useGameStore from '../../state/game.state';
+import useGameStore, { ILostReasons } from '../../state/game.state';
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -166,9 +166,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     let init = true;
     useFrame((state, delta) => {
         const elapsedTime = state.clock.elapsedTime
-        if (elapsedTime > gameStartedElapsedTime && lost) {
-            return
-        }
         let {
             flow,
             out,
@@ -180,6 +177,9 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             temp,
             levelCapTop,
         } = gameState
+        if (elapsedTime > gameStartedElapsedTime && lost) {
+            return
+        }
         // lossCondition
         if (elapsedTime > gameStartedElapsedTime &&
             (
@@ -187,8 +187,13 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 (levelRef.current && levelRef.current.scale.y < lossConditions.level / levelConf.max)
             )
         ) {
+            const lostResoan =
+                pressure >= lossConditions.pressure ?
+                    ILostReasons.HP : ILostReasons.LL
             setLost(true)
             setScore({
+                lostResoan,
+                gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
                 elapsedTime,
                 flowVariances
             })
@@ -351,7 +356,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 </mesh>
                 <Text
                     {...textProps}
-                    position={[-10.772, 4.55, 0.903+1]}
+                    position={[-10.772, 4.55, 0.903 + 1]}
                     ref={tempTextRef}
                     children={""}
                 />
