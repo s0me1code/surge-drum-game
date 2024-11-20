@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { GLTF, Line2 } from 'three-stdlib'
 import '../../App.css'
 import { _between } from '../../utils/_';
-import useGameStore, { ILostReasons } from '../../state/game';
+import useGameStore, { ILostReasons } from '../../state/game.state';
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -212,12 +212,12 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
             phase = Phases.end
-           // !scoreSetted && setScore({
-           //     lostResoan,
-           //     gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
-           //     elapsedTime,
-           //     flowVariances
-           // })
+            // !scoreSetted && setScore({
+            //     lostResoan,
+            //     gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
+            //     elapsedTime,
+            //     flowVariances
+            // })
             console.log({
                 lostResoan,
                 elapsedTime,
