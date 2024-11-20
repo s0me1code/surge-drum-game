@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useGameStore, { ILostReasons } from "../../state/game.state";
+import useGameStore, { ILostReasons } from "../../state/game";
 
 const conf = {
     countT: "Get ready will start in ...",

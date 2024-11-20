@@ -61,6 +61,8 @@ const Experinace = () => {
         <PerspectiveCamera
             ref={cameraRef}
             makeDefault
+            far={20}
+            fov={65}
             position={_toArray(camera.position)} />
 
         <Ground />
@@ -72,7 +74,7 @@ const Experinace = () => {
 function App() {
     return <>
         <Overlay/>
-        <Canvas shadows style={{ background: "#222" }} camera={{far:1}}>
+        <Canvas shadows style={{ background: "#222" }}>
             <Experinace />
         </Canvas>
     </>

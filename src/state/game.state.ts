@@ -13,18 +13,18 @@ type IGauges = {
 }
 type IGameStore = {
     count: number,
-    lost: boolean,
+    scoreSetted: boolean,
     lostResoan?: ILostReasons,
     elapsedTime: number,
     flowVariances: number,
     gauges: IGauges,
-    setLost: (lost: boolean) => void,
+    setScoreSetted: (scoreSetted:boolean) => void,
     setScore: (arg0: { gauges: IGauges, lostResoan: ILostReasons, elapsedTime: number, flowVariances: number }) => void,
 }
 
 const useGameStore = create<IGameStore>((set) => ({
     count: 5,
-    lost: false,
+    scoreSetted: false,
     elapsedTime: 0,
     flowVariances: 1,
     gauges: {
@@ -34,8 +34,8 @@ const useGameStore = create<IGameStore>((set) => ({
         temp: 0,
         out: 0,
     },
-    setLost: (lost) => set({ lost }),
-    setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set({ gauges, elapsedTime, flowVariances, lostResoan })
+    setScoreSetted: (scoreSetted) => set(()=>({ scoreSetted})),
+    setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) =>  set(()=>({ gauges, elapsedTime, flowVariances, lostResoan }))
 }));
 
 export default useGameStore;

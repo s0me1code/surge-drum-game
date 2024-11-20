@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { GLTF, Line2 } from 'three-stdlib'
 import '../../App.css'
 import { _between } from '../../utils/_';
-import useGameStore, { ILostReasons } from '../../state/game.state';
+import useGameStore, { ILostReasons } from '../../state/game';
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -141,8 +141,17 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * Use Frame
      * */
     // GameStateInitials
-    let { lost, setLost, setScore } = useGameStore()
-    let gameState = {
+    let { setScore, scoreSetted, setScoreSetted } = useGameStore()
+    enum Phases {
+        start = 0,
+        playing = 1,
+        end = 2
+    }
+    let phase = Phases.start
+    const count = 5
+    let countStart = 0
+    let restart = false
+    const initGameState = {
         flow: 0,
         targetFlow: 0,
         level: 0,
@@ -154,6 +163,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         levelCapTop: levelConf.max,
         levelCapBottom: levelConf.min,
     }
+    let gameState = { ...initGameState }
     const generateRandomFlowTarget = () => Math.floor(Math.random() * flowConf.max)
     const calculatePressureTarget = ({ level, flow, temp }: typeof generatePressureRatios) =>
         _between((generatePressureRatios.level * level + generatePressureRatios.flow * flow + generatePressureRatios.temp * temp), pressureConf.max, pressureConf.min)
@@ -177,11 +187,22 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             temp,
             levelCapTop,
         } = gameState
-        if (elapsedTime > gameStartedElapsedTime && lost) {
+
+        console.log(phase)
+        if (phase == Phases.end) {
             return
         }
+        if (restart) {
+            console.log("game restarted")
+            restart = false
+            countStart = elapsedTime
+        }
+        if (phase == Phases.start && elapsedTime - countStart > count) {
+            phase = Phases.playing
+            countStart = 0
+        }
         // lossCondition
-        if (elapsedTime > gameStartedElapsedTime &&
+        if (phase == Phases.playing &&
             (
                 pressure >= lossConditions.pressure ||
                 (levelRef.current && levelRef.current.scale.y < lossConditions.level / levelConf.max)
@@ -190,17 +211,18 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             const lostResoan =
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
-            setLost(true)
-            setScore({
-                lostResoan,
-                gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
-                elapsedTime,
-                flowVariances
-            })
+            phase = Phases.end
+           // !scoreSetted && setScore({
+           //     lostResoan,
+           //     gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
+           //     elapsedTime,
+           //     flowVariances
+           // })
             console.log({
-                lost,
+                lostResoan,
                 elapsedTime,
                 flowVariances,
+                gameState,
             })
             return
         }
@@ -272,6 +294,14 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             if (event.key === ' ' || event.key === 'a') {
                 event.preventDefault();
                 gameState.spaceDown = true
+            }
+            if (event.key === 'e') {
+                event.preventDefault();
+                phase = Phases.start
+                gameState = { ...initGameState }
+                init = true
+                restart = true
+                //setScoreSetted(true)
             }
         };
         window.addEventListener('keydown', handleKeyDown);
