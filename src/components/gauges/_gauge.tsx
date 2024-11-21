@@ -119,7 +119,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         timeOver: 6,
         onPressEffectRatio: .02,
     }
-    const gameStartedElapsedTime = 8
     // socre
     let flowVariances = 1
 
@@ -141,7 +140,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * Use Frame
      * */
     // GameStateInitials
-    let { setScore, scoreSetted, setScoreSetted } = useGameStore()
+    let { setScore, scoreSetted } = useGameStore()
     enum Phases {
         start = 0,
         playing = 1,
@@ -150,7 +149,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     let phase = Phases.start
     const count = 5
     let countStart = 0
-    let restart = false
     const initGameState = {
         flow: 0,
         targetFlow: 0,
@@ -189,13 +187,8 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         } = gameState
 
         console.log(phase)
-        if (phase == Phases.end) {
+        if (scoreSetted || phase == Phases.end) {
             return
-        }
-        if (restart) {
-            console.log("game restarted")
-            restart = false
-            countStart = elapsedTime
         }
         if (phase == Phases.start && elapsedTime - countStart > count) {
             phase = Phases.playing
@@ -212,12 +205,12 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
             phase = Phases.end
-            // !scoreSetted && setScore({
-            //     lostResoan,
-            //     gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
-            //     elapsedTime,
-            //     flowVariances
-            // })
+            !scoreSetted && setScore({
+                lostResoan,
+                gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
+                elapsedTime,
+                flowVariances
+            })
             console.log({
                 lostResoan,
                 elapsedTime,
@@ -294,14 +287,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             if (event.key === ' ' || event.key === 'a') {
                 event.preventDefault();
                 gameState.spaceDown = true
-            }
-            if (event.key === 'e') {
-                event.preventDefault();
-                phase = Phases.start
-                gameState = { ...initGameState }
-                init = true
-                restart = true
-                //setScoreSetted(true)
             }
         };
         window.addEventListener('keydown', handleKeyDown);

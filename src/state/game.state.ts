@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { db } from "../firebase/config";
+import { addDoc, collection } from "firebase/firestore";
 
 export enum ILostReasons {
     HP = "high pressure",
@@ -11,6 +13,7 @@ type IGauges = {
     temp: number,
     out: number,
 }
+export type IScore = { gauges: IGauges, lostResoan: ILostReasons, elapsedTime: number, flowVariances: number, at?: Date, by?: string}
 type IGameStore = {
     count: number,
     scoreSetted: boolean,
@@ -18,9 +21,18 @@ type IGameStore = {
     elapsedTime: number,
     flowVariances: number,
     gauges: IGauges,
-    setScoreSetted: (scoreSetted:boolean) => void,
-    setScore: (arg0: { gauges: IGauges, lostResoan: ILostReasons, elapsedTime: number, flowVariances: number }) => void,
+    setScore: (arg0: IScore) => void,
 }
+const handleAddScore = async (score: any) => {
+    try {
+        const docRef = await addDoc(collection(db, "_"), {
+            ...score
+        });
+        console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+        console.error("Error adding document: ", error);
+    }
+};
 
 const useGameStore = create<IGameStore>((set) => ({
     count: 5,
@@ -34,8 +46,10 @@ const useGameStore = create<IGameStore>((set) => ({
         temp: 0,
         out: 0,
     },
-    setScoreSetted: (scoreSetted) => set(()=>({ scoreSetted})),
-    setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) =>  set(()=>({ gauges, elapsedTime, flowVariances, lostResoan }))
+    setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set(() => {
+        //handleAddScore({ gauges, elapsedTime, flowVariances, lostResoan, at: Date.now(), by: "temp" })
+        return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true }
+    })
 }));
 
 export default useGameStore;
