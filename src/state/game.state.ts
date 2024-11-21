@@ -47,7 +47,7 @@ const useGameStore = create<IGameStore>((set) => ({
         out: 0,
     },
     setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set(() => {
-        //handleAddScore({ gauges, elapsedTime, flowVariances, lostResoan, at: Date.now(), by: "temp" })
+        handleAddScore({ gauges, elapsedTime, flowVariances, lostResoan, at: Date.now(), by: "temp" })
         return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true }
     })
 }));
