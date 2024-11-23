@@ -61,14 +61,14 @@ export const Dashboard = () => {
                         <TableCell>{score.elapsedTime}</TableCell>
                         <TableCell>{score.flowVariances}</TableCell>
                         <TableCell>{formatDate(score.at)}</TableCell>
-                        <TableCell>{score.by || "N/A"}</TableCell>
+                        <TableCell>{score.name || "N/A"}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
     </>
 }
-const formatDate = (date?: Date): string => {
+const formatDate = (date?: Date | number): string => {
     if (!date) return "N/A";
     return new Intl.DateTimeFormat("en-US", {
         year: "numeric",

@@ -11,6 +11,8 @@ import {
 } from "../../../components/ui/dialog"
 import useGameStore, { ILostReasons } from "../../state/game.state";
 import { Card } from "../../../components/ui/card";
+import { useNavigate } from 'react-router-dom';
+
 
 const conf = {
     countT: "Get ready will start in ...",
@@ -19,9 +21,14 @@ const conf = {
     lostReasonsLLT: " your level droped below 10",
 }
 const Overlay = () => {
+    const navigate = useNavigate();
     const { count, lostResoan, gauges, showDialog } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
 
+    const handlePlayAgain = () => { }
+    const handelDashboard = () => {
+        navigate("/dashboard")
+    }
     useEffect(() => {
         if (showDialog)
             setOpen(true)
@@ -30,7 +37,7 @@ const Overlay = () => {
     return <>
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="select-none absolute top-3 right-3 z-20" >
-                {showDialog&&<Button variant={"destructive"}>
+                {showDialog && <Button variant={"destructive"}>
                     Game Over
                 </Button>}
             </DialogTrigger>
@@ -70,8 +77,9 @@ const Overlay = () => {
                         <span className={"font-semibold"}>{gauges.out.toFixed(2)}</span>
                     </div>
                 </div>
-                <DialogFooter>
-                    <Button type="submit">Save changes</Button>
+                <DialogFooter className="">
+                    <Button onClick={handlePlayAgain} className="border-2" variant={"outline"}>Play Agian</Button>
+                    <Button onClick={handelDashboard} >Dashboard</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
