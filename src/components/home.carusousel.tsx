@@ -2,14 +2,14 @@ import { Card } from "../../components/ui/card"
 import { Carousel, CarouselContent, CarouselItem } from "../../components/ui/carousel"
 import { useEffect, useState } from "react"
 
-export type IDifficalty = {
+export type IDifficulty = {
     label: string,
     value: string,
     videoUrl: string,
 }
 interface DifficultyCarouselProps {
-    selectedDifficulty: string
-    difficulties: IDifficalty[]
+    selectedDifficulty?: string
+    difficulties: IDifficulty[]
 }
 
 export const DifficultyCarousel = ({ selectedDifficulty, difficulties }: DifficultyCarouselProps) => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import { Toaster } from "../components/ui/toaster"
 import { _toArray } from './utils/_'
 import { Dashboard } from './Dashboard'
 import { Home } from './Home'
@@ -23,6 +24,7 @@ function App() {
             <button onClick={() => navigate("/")}>Home</button>
             <button onClick={() => navigate("/dashboard")}>About</button>
         </nav>
+        <Toaster />
         {route == "/" &&
             <Home />
         }
