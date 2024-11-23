@@ -78,7 +78,7 @@ const ExperinaceCanvas = () => {
 export const Experinace: React.FC<IHomeChild> = ({ setPhase }) => {
     const { startAn, convasAn } = useAnStore()
     return <>
-        <motion.div
+        {startAn && <motion.div
             {...convasAn}
             animate={startAn ? "on" : "off"}
             className='absolute top-0 right-0 z-10 w-full h-full p-4 pt-16 flex flex-col justify-between align-top text-center text-2xl font-semibold '>
@@ -92,6 +92,6 @@ export const Experinace: React.FC<IHomeChild> = ({ setPhase }) => {
             >
                 <ExperinaceCanvas />
             </Canvas>
-        </motion.div>
+        </motion.div>}
     </>
 }

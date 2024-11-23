@@ -38,7 +38,8 @@ const conf: IConf = {
 }
 
 export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
-    const { setDetails } = useGameStore()
+
+    const { setDetails, setRunning, running } = useGameStore()
     const { toast } = useToast()
     const [difficulty, setDifficalty] = useState<string>()
     const [name, setName] = useState<string>()
@@ -49,6 +50,7 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
     const handelSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         if (name && difficulty) {
+            setStartAn(true)
             setDetails({ name, difficulty })
             toast({ description: "Your data saved successfully" })
             setPhase(Phases.experinace)
@@ -109,7 +111,9 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
         <Button
             className='absolute z-50 top-0 right-1/2'
             onClick={() => {
-                setStartAn(!startAn); console.log(startAn)
+                console.log(running)
+                //                setStartAn(!startAn); console.log(startAn)
+                setRunning(true)
             }} >
             {conf.button}
         </Button>

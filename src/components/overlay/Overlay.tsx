@@ -36,7 +36,7 @@ const Overlay: React.FC<IHomeChild> = ({ setPhase }) => {
     }
     useEffect(() => {
         if (showDialog)
-            setOpen(false)
+            setOpen(true)
     }, [showDialog])
 
     return <>
