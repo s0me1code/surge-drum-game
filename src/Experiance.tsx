@@ -74,7 +74,7 @@ const ExperinaceCanvas = () => {
 export const Experinace = () => {
     return <>
         <Overlay />
-        <Canvas shadows style={{ background: "#222" }}>
+        <Canvas frameloop='demand' shadows style={{ background: "#222" }}>
             <ExperinaceCanvas />
         </Canvas>
     </>

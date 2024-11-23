@@ -24,6 +24,9 @@ export type IScore = {
     difficulty?: string,
 }
 type IGameStore = {
+    restart: boolean,
+    running: boolean,
+    setRunning: (running: boolean) => void,
     name?: string,
     difficulty?: string,
     count: number,
@@ -34,6 +37,7 @@ type IGameStore = {
     gauges: IGauges,
     showDialog: boolean,
     setShowDialog: (showDialog: boolean) => void,
+    setRestart: (restart: boolean) => void,
     setScore: (arg0: IScore) => void,
     setDetails: (arg0: { name: string, difficulty: string }) => void,
 }
@@ -49,6 +53,10 @@ const handleAddScore = async (score: IScore) => {
 };
 
 const useGameStore = create<IGameStore>((set, get) => ({
+    running: false,
+    setRunning: (running) => set(() => ({ running })),
+    restart: true,
+    setRestart: (restart) => set(() => ({ restart })),
     count: 5,
     scoreSetted: false,
     elapsedTime: 0,
@@ -70,9 +78,9 @@ const useGameStore = create<IGameStore>((set, get) => ({
                 lostResoan, at: Date.now(), name,
                 difficulty
             })
-        return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true }
+        return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true, running: false }
     }),
-    setDetails: ({ name, difficulty }) => set(() => ({ name, difficulty }))
+    setDetails: ({ name, difficulty }) => set(() => ({ name, difficulty, running: true }))
 }));
 
 export default useGameStore;

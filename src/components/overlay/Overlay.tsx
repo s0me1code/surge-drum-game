@@ -22,11 +22,15 @@ const conf = {
 }
 const Overlay = () => {
     const navigate = useNavigate();
-    const { count, lostResoan, gauges, showDialog } = useGameStore()
+    const {count, lostResoan, gauges, showDialog, setRestart, restart } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
 
-    const handlePlayAgain = () => { }
+    const handlePlayAgain = () => {
+        setRestart(!restart)
+        setOpen(false)
+    }
     const handelDashboard = () => {
+        setOpen(false)
         navigate("/dashboard")
     }
     useEffect(() => {
