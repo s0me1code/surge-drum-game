@@ -173,7 +173,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     let lastUpdateTime = 0;
     let init = true;
     useFrame((state, delta) => {
-        if (!running)return
+        if (!running) return
         const elapsedTime = state.clock.elapsedTime
         let {
             flow,
@@ -208,7 +208,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
             phase = Phases.end
-            !scoreSetted && setScore({
+            !scoreSetted && running && setScore({
                 lostResoan,
                 gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
                 elapsedTime,

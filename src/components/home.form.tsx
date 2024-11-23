@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import { ToggleGroupItem, ToggleGroup } from "../.././components/ui/toggle-group"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../.././components/ui/card"
 import { Input } from "../.././components/ui/input"
@@ -54,8 +55,18 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
             toast({ description: "Try Again, We faced and issue saving your data", variant: "destructive" })
         }
     }
+
+    const [toggle, setToggle] = useState<boolean>()
+    const getAnimationSettings = () => ({
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 5 },
+    });
+    const animationSettings = getAnimationSettings();
+
     return <div className="w-full h-full flex flex-row justify-around items-center">
-        <Card className="w-full max-w-sm mx-auto">
+        <Card className="w-1/2 max-w-sm mx-auto">
             <CardHeader>
                 <CardTitle>{conf.title}</CardTitle>
             </CardHeader>
@@ -94,9 +105,36 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
                 <Button disabled={!name || !difficulty} onClick={handelSubmit}>{conf.button}</Button>
             </CardFooter>
         </Card>
-        <DifficultyCarousel difficulties={conf.difficulties} selectedDifficulty={difficulty} />
+        <AnimatePresence mode='wait'>
+            <div className="w-1/2 flex-col relative">
+                {toggle ?
+                    <div
+                        className="w-full flex flex-row justify-center"
+                        {...animationSettings}
+                    >
+                        <DifficultyCarousel difficulties={conf.difficulties} selectedDifficulty={difficulty} />
+                    </div> :
+                    <motion.div className="w-full flex flex-row justify-center"
+                        {...animationSettings}
+                    >
+                        <Video />
+                    </motion.div>
+                }
+            </div>
+        </AnimatePresence>
     </div>
 }
 
 
+const Video = () => {
+    return (
+        <Card className=" w-[36rem] overflow-clip p-1">
+            <video
+                className="rounded-lg"
+                src={"./walk.mp4"}
+                controls={false}
+            />
+        </Card>
+    );
+}
 
