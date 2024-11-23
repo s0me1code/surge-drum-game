@@ -9,6 +9,7 @@ import { useState } from "react"
 import { DifficultyCarousel, IDifficulty } from "./home.carusousel"
 import useGameStore from "../state/game.state"
 import { useToast } from "../../hooks/use-toast"
+import { useAnStore } from '../state/animation.store';
 
 type IConf = { title: string, name: string, nameP: string, difficulty: string, difficulties: IDifficulty[], button: string }
 const conf: IConf = {
@@ -56,54 +57,13 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
         }
     }
 
-    const [startAn, setStartAn] = useState<boolean>(false)
-    const transitionComm = {
-        ease: "easeInOut",
-        duration: 6,
-        times: [0, 1/6, 1],
-    }
-    let carusouselAn: MotionProps = {
-        variants: {
-            on: { opacity: 0, },
-        },
-        initial: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: {
-            ...transitionComm,
-            duration: 1,
-            times: []
-        },
-    }
-    const walkAn: MotionProps = {
-        variants: {
-            on: {
-                opacity: [0, 1, 1],
-                translateX: [0, 0, "-150%"]
-            },
-        },
-        initial: { opacity: 0 },
-        exit: { opacity: 0 },
-        transition: {
-            ...transitionComm,
-        },
-    }
-    const formAn: MotionProps = {
-        variants: {
-            on: {
-                translateX: [0, 0, "-150%"]
-            },
-        },
-        initial: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: {
-            ...transitionComm,
-        },
-    }
+    // Animaiton
+    const { startAn, setStartAn, carusouselAn, formAn, walkAn } = useAnStore()
 
-    return <div className="w-full h-full flex flex-row justify-around items-center">
+    return <div className="bg-none bg-transparent w-full h-full flex flex-row justify-around items-center">
         <motion.div
             {...formAn}
-            animate={startAn ? "on" : undefined}
+            animate={startAn ? "on" : "off"}
             className='w-full'>
             <Card className="w-full max-w-sm mx-auto">
                 <CardHeader>
@@ -147,7 +107,7 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
         </motion.div>
 
         <Button
-            className='absolute top-0 right-1/2'
+            className='absolute z-50 top-0 right-1/2'
             onClick={() => {
                 setStartAn(!startAn); console.log(startAn)
             }} >
@@ -158,13 +118,13 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
                 <motion.div
                     className="w-full flex flex-row justify-center"
                     {...carusouselAn}
-                    animate={startAn ? "on" : undefined}
+                    animate={startAn ? "on" : "off"}
                 >
                     <DifficultyCarousel difficulties={conf.difficulties} selectedDifficulty={difficulty} />
                 </motion.div>
                 <motion.div className=" absolute top-0 w-full flex flex-row justify-start"
                     {...walkAn}
-                    animate={startAn ? "on" : undefined}
+                    animate={startAn ? "on" : "off"}
                 >
                     <Video />
                 </motion.div>
@@ -181,6 +141,8 @@ const Video = () => {
                 className="rounded-lg"
                 src={"./walk.mp4"}
                 controls={false}
+                autoPlay
+                loop
             />
         </Card>
     );

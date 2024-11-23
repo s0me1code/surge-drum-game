@@ -27,9 +27,9 @@ const Landing: React.FC<IHomeChild> = ({ setPhase }) => {
 
 export const Home = () => {
     const [phase, setPhase] = useState<Phases>(Phases.landing)
-    return <>
-        {phase == Phases.landing && <Landing setPhase={setPhase} />}
-        {phase == Phases.form && <Form setPhase={setPhase} />}
-        {phase == Phases.experinace && <Experinace setPhase={setPhase} />}
-    </>
+    return <div className="relative w-full h-full overflow-hidden">
+        <Form setPhase={setPhase} />
+        <Experinace setPhase={setPhase} />
+    </div>
 }
+//{ phase == Phases.landing && <Landing setPhase={setPhase} /> }

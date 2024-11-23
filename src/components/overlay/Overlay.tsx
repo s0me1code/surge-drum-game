@@ -20,9 +20,9 @@ const conf = {
     lostReasonsHPT: " your pressure went higher than 340",
     lostReasonsLLT: " your level droped below 10",
 }
-const Overlay:React.FC<IHomeChild> = ({setPhase}) => {
+const Overlay: React.FC<IHomeChild> = ({ setPhase }) => {
     const navigate = useNavigate();
-    const {count, lostResoan, gauges, showDialog, setRestart, restart } = useGameStore()
+    const { count, lostResoan, gauges, showDialog, setRestart, restart } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
 
     const handlePlayAgain = () => {
@@ -96,9 +96,10 @@ type ICount = {
     start: number,
 }
 const Count: React.FC<ICount> = ({ start },) => {
+    const { running } = useGameStore()
     const [count, setCount] = useState(start);
     useEffect(() => {
-        const timerInterval = setInterval(() => {
+        const timerInterval = running ? setInterval(() => {
             setCount((prevTime) => {
                 if (prevTime === 0) {
                     clearInterval(timerInterval);
@@ -107,7 +108,7 @@ const Count: React.FC<ICount> = ({ start },) => {
                     return prevTime - 1;
                 }
             });
-        }, 1000);
+        }, 1000) : undefined
         return () => clearInterval(timerInterval);
     }, []);
     return <>

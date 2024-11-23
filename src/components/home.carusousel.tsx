@@ -40,10 +40,10 @@ const Video = ({ videoUrl }: IVideo) => {
     return (
         <Card className=" w-[36rem] overflow-clip p-1">
             <video
-                className="rounded-lg"
-                src={videoUrl}
                 autoPlay
                 loop
+                className="rounded-lg"
+                src={videoUrl}
                 controls={false}
             />
         </Card>
