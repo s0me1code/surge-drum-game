@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useGameStore, { ILostReasons } from "../../state/game.state";
+import { Card } from "../../../components/ui/card";
 
 const conf = {
     countT: "Get ready will start in ...",
@@ -15,7 +16,6 @@ const Overlay = () => {
             <Text>
                 {conf.countT}
             </Text>
-            <Count start={count} />
             <Text>
                 {lostResoan &&
                     (lostResoan == ILostReasons.HP ?
@@ -32,13 +32,14 @@ const Overlay = () => {
                 out: {gauges.out.toFixed(2)}
             </Text>
         </div>
+        <Count start={count} />
     </>
 }
 
 type ICount = {
     start: number,
 }
-const Count: React.FC<ICount> = ({ start }) => {
+const Count: React.FC<ICount> = ({ start },) => {
     const [count, setCount] = useState(start);
     useEffect(() => {
         const timerInterval = setInterval(() => {
@@ -54,9 +55,11 @@ const Count: React.FC<ICount> = ({ start }) => {
         return () => clearInterval(timerInterval);
     }, []);
     return <>
-        <Text>
-            {count}
-        </Text>
+        {count > 0 && <div className="absolute text-[10rem] z-20 leading-tight top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2">
+            <Card className="bg-primary-foreground/50 border-primary">
+                {count}
+            </Card>
+        </div>}
     </>
 }
 

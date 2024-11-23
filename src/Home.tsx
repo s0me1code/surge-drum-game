@@ -3,7 +3,7 @@ import { Experinace } from "./Experiance"
 import { Cover } from "./components/aceternity/cover"
 import { Form } from "./components/home.form"
 
-enum Phases {
+export enum Phases {
     landing = 0,
     form = 1,
     experinace = 5,
@@ -11,7 +11,7 @@ enum Phases {
 
 export type IHomeChild = {
     phase?: Phases,
-    setPhase?: React.Dispatch<React.SetStateAction<Phases>>,
+    setPhase: React.Dispatch<React.SetStateAction<Phases>>,
 }
 
 const Landing: React.FC<IHomeChild> = ({ setPhase }) => {

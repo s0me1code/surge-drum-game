@@ -19,9 +19,8 @@ export type IScore = {
     lostResoan: ILostReasons,
     elapsedTime: number,
     flowVariances: number,
-    at?: Date,
-    by?: string
-    name: string,
+    at?: number,
+    name?: string
     difficulty: string,
 }
 type IGameStore = {
@@ -34,9 +33,9 @@ type IGameStore = {
     flowVariances: number,
     gauges: IGauges,
     setScore: (arg0: IScore) => void,
-    setDetails: (arg0: { name: string, difficulty: string}) => void,
+    setDetails: (arg0: { name: string, difficulty: string }) => void,
 }
-const handleAddScore = async (score: any) => {
+const handleAddScore = async (score: IScore) => {
     try {
         const docRef = await addDoc(collection(db, "_"), {
             ...score
@@ -47,7 +46,7 @@ const handleAddScore = async (score: any) => {
     }
 };
 
-const useGameStore = create<IGameStore>((set) => ({
+const useGameStore = create<IGameStore>((set, get) => ({
     count: 5,
     scoreSetted: false,
     elapsedTime: 0,
@@ -60,7 +59,13 @@ const useGameStore = create<IGameStore>((set) => ({
         out: 0,
     },
     setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set(() => {
-        handleAddScore({ gauges, elapsedTime, flowVariances, lostResoan, at: Date.now(), by: "temp" })
+        const { name, difficulty } = get()
+        if (difficulty && name)
+            handleAddScore({
+                gauges, elapsedTime, flowVariances,
+                lostResoan, at: Date.now(),  name,
+                difficulty
+            })
         return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true }
     }),
     setDetails: ({ name, difficulty }) => set(() => ({ name, difficulty }))
