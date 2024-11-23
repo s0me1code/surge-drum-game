@@ -30,6 +30,6 @@ export const Home = () => {
     return <>
         {phase == Phases.landing && <Landing setPhase={setPhase} />}
         {phase == Phases.form && <Form setPhase={setPhase} />}
-        {phase == Phases.experinace && <Experinace />}
+        {phase == Phases.experinace && <Experinace setPhase={setPhase} />}
     </>
 }

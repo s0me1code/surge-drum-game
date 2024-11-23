@@ -12,7 +12,7 @@ import {
 import useGameStore, { ILostReasons } from "../../state/game.state";
 import { Card } from "../../../components/ui/card";
 import { useNavigate } from 'react-router-dom';
-
+import { IHomeChild, Phases } from "../../Home";
 
 const conf = {
     countT: "Get ready will start in ...",
@@ -20,7 +20,7 @@ const conf = {
     lostReasonsHPT: " your pressure went higher than 340",
     lostReasonsLLT: " your level droped below 10",
 }
-const Overlay = () => {
+const Overlay:React.FC<IHomeChild> = ({setPhase}) => {
     const navigate = useNavigate();
     const {count, lostResoan, gauges, showDialog, setRestart, restart } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
@@ -28,6 +28,7 @@ const Overlay = () => {
     const handlePlayAgain = () => {
         setRestart(!restart)
         setOpen(false)
+        setPhase(Phases.form)
     }
     const handelDashboard = () => {
         setOpen(false)
@@ -35,12 +36,12 @@ const Overlay = () => {
     }
     useEffect(() => {
         if (showDialog)
-            setOpen(true)
+            setOpen(false)
     }, [showDialog])
 
     return <>
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="select-none absolute top-3 right-3 z-20" >
+            <DialogTrigger className="select-none absolute top-3 right-5 z-20" >
                 {showDialog && <Button variant={"destructive"}>
                     Game Over
                 </Button>}

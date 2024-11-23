@@ -172,8 +172,8 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     // UseFrameIintials
     let lastUpdateTime = 0;
     let init = true;
-    console.log("sooooooo",running)
     useFrame((state, delta) => {
+        if (!running)return
         const elapsedTime = state.clock.elapsedTime
         let {
             flow,
@@ -188,7 +188,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         } = gameState
 
         console.log(phase)
-        running && invalidate()
+        false && running && invalidate()
         console.log(elapsedTime)
         if (scoreSetted || phase == Phases.end) {
             return
