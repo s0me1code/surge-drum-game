@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { IScore } from "./state/game.state";
 import { collection, getDocs } from "firebase/firestore";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "./../components/ui/table"
 import { db } from "./firebase/config";
 
 export const Dashboard = () => {
@@ -23,38 +32,40 @@ export const Dashboard = () => {
     }, []);
     return <>
         <h1>dashboard</h1>
-        <table border={1} style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-                <tr>
-                    <th>Flow</th>
-                    <th>Level</th>
-                    <th>Pressure</th>
-                    <th>Temp</th>
-                    <th>Out</th>
-                    <th>Lost Reason</th>
-                    <th>Elapsed Time</th>
-                    <th>Flow Variances</th>
-                    <th>At</th>
-                    <th>By</th>
-                </tr>
-            </thead>
-            <tbody>
+
+        <Table>
+            <TableCaption>A list of gauge readings and performance metrics.</TableCaption>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>Flow</TableHead>
+                    <TableHead>Level</TableHead>
+                    <TableHead>Pressure</TableHead>
+                    <TableHead>Temp</TableHead>
+                    <TableHead>Out</TableHead>
+                    <TableHead>Lost Reason</TableHead>
+                    <TableHead>Elapsed Time</TableHead>
+                    <TableHead>Flow Variances</TableHead>
+                    <TableHead>At</TableHead>
+                    <TableHead>By</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
                 {scores?.map((score, index) => (
-                    <tr key={index}>
-                        <td>{score.gauges.flow}</td>
-                        <td>{score.gauges.level}</td>
-                        <td>{score.gauges.pressure}</td>
-                        <td>{score.gauges.temp}</td>
-                        <td>{score.gauges.out}</td>
-                        <td>{score.lostResoan}</td>
-                        <td>{score.elapsedTime}</td>
-                        <td>{score.flowVariances}</td>
-                        <td>{formatDate(score.at)}</td>
-                        <td>{score.by || "N/A"}</td>
-                    </tr>
+                    <TableRow key={index}>
+                        <TableCell>{score.gauges.flow}</TableCell>
+                        <TableCell>{score.gauges.level}</TableCell>
+                        <TableCell>{score.gauges.pressure}</TableCell>
+                        <TableCell>{score.gauges.temp}</TableCell>
+                        <TableCell>{score.gauges.out}</TableCell>
+                        <TableCell>{score.lostResoan}</TableCell>
+                        <TableCell>{score.elapsedTime}</TableCell>
+                        <TableCell>{score.flowVariances}</TableCell>
+                        <TableCell>{formatDate(score.at)}</TableCell>
+                        <TableCell>{score.by || "N/A"}</TableCell>
+                    </TableRow>
                 ))}
-            </tbody>
-        </table>
+            </TableBody>
+        </Table>
     </>
 }
 const formatDate = (date?: Date): string => {
