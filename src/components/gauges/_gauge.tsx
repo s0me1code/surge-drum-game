@@ -140,7 +140,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * Use Frame
      * */
     // GameStateInitials
-    let { setScore, scoreSetted } = useGameStore()
+    let { setScore, scoreSetted, setShowDialog, showDialog } = useGameStore()
     enum Phases {
         start = 0,
         playing = 1,
@@ -152,7 +152,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const initGameState = {
         flow: 0,
         targetFlow: 0,
-        level: 0,
+        level: 10,
         out: 0,
         pressure: 0,
         targetPressure: 0,
@@ -211,6 +211,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 elapsedTime,
                 flowVariances
             })
+            !showDialog && setShowDialog(true)
             console.log({
                 lostResoan,
                 elapsedTime,

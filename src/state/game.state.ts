@@ -21,7 +21,7 @@ export type IScore = {
     flowVariances: number,
     at?: number,
     name?: string
-    difficulty: string,
+    difficulty?: string,
 }
 type IGameStore = {
     name?: string,
@@ -32,6 +32,8 @@ type IGameStore = {
     elapsedTime: number,
     flowVariances: number,
     gauges: IGauges,
+    showDialog: boolean,
+    setShowDialog: (showDialog: boolean) => void,
     setScore: (arg0: IScore) => void,
     setDetails: (arg0: { name: string, difficulty: string }) => void,
 }
@@ -58,12 +60,14 @@ const useGameStore = create<IGameStore>((set, get) => ({
         temp: 0,
         out: 0,
     },
+    showDialog: false,
+    setShowDialog: (showDialog) => set(() => ({ showDialog })),
     setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set(() => {
         const { name, difficulty } = get()
         if (difficulty && name)
             handleAddScore({
                 gauges, elapsedTime, flowVariances,
-                lostResoan, at: Date.now(),  name,
+                lostResoan, at: Date.now(), name,
                 difficulty
             })
         return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true }

@@ -1,37 +1,80 @@
 import { useEffect, useState } from "react";
+import { Button } from "../../../components/ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "../../../components/ui/dialog"
 import useGameStore, { ILostReasons } from "../../state/game.state";
 import { Card } from "../../../components/ui/card";
 
 const conf = {
     countT: "Get ready will start in ...",
     countStart: 5,
-    lostReasonsHPT: "You lost becouse the pressure went higher than 340",
-    lostReasonsLLT: "You lost becouse the level droped below 10",
+    lostReasonsHPT: " your pressure went higher than 340",
+    lostReasonsLLT: " your level droped below 10",
 }
 const Overlay = () => {
-    const { count, lostResoan, gauges } = useGameStore()
-    console.log(lostResoan)
+    const { count, lostResoan, gauges, showDialog } = useGameStore()
+    const [open, setOpen] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (showDialog)
+            setOpen(true)
+    }, [showDialog])
+
     return <>
-        <div className={"absolute flex flex-col bg-white z-10 top-0 right-1/2 translate-x-1/2"}>
-            <Text>
-                {conf.countT}
-            </Text>
-            <Text>
-                {lostResoan &&
-                    (lostResoan == ILostReasons.HP ?
-                        conf.lostReasonsHPT :
-                        conf.lostReasonsLLT
-                    )
-                }
-            </Text>
-            <Text>
-                level: {gauges.level.toFixed(2)}
-                flow: {gauges.flow.toFixed(2)}
-                pressure: {gauges.pressure.toFixed(2)}
-                temp: {gauges.temp.toFixed(2)}
-                out: {gauges.out.toFixed(2)}
-            </Text>
-        </div>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger className="select-none absolute top-3 right-3 z-20" >
+                {showDialog&&<Button variant={"destructive"}>
+                    Game Over
+                </Button>}
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle className="text-3xl">Game Over</DialogTitle>
+                    <DialogDescription className="text-xl">
+                        Your reach the end of the game, becouse
+                        <span className="text-primary font-bold underline">
+                            {lostResoan &&
+                                (lostResoan == ILostReasons.HP ?
+                                    conf.lostReasonsHPT :
+                                    conf.lostReasonsLLT
+                                )}
+                        </span>
+                    </DialogDescription>
+                </DialogHeader>
+                <div className=" flex flex-col  space-y-2 text-xl">
+                    <div>
+                        <span >level:</span>{' '}
+                        <span className={"font-semibold"} >{gauges.level.toFixed(2)}</span>
+                    </div>
+                    <div>
+                        <span >flow:</span>{' '}
+                        <span className={"font-semibold"} >{gauges.flow.toFixed(2)}</span>
+                    </div>
+                    <div>
+                        <span >pressure:</span>{' '}
+                        <span className={"font-semibold"}>{gauges.pressure.toFixed(2)}</span>
+                    </div>
+                    <div>
+                        <span >temp:</span>{' '}
+                        <span className={"font-semibold"}>{gauges.temp.toFixed(2)}</span>
+                    </div>
+                    <div>
+                        <span >out:</span>{' '}
+                        <span className={"font-semibold"}>{gauges.out.toFixed(2)}</span>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button type="submit">Save changes</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
         <Count start={count} />
     </>
 }
