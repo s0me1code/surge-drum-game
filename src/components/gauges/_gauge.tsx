@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { MeshProps, useFrame, useThree } from '@react-three/fiber';
+import { MeshProps, useFrame } from '@react-three/fiber';
 import { damp } from 'maath/easing';
 import { Line, LineProps, Text, useGLTF } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
@@ -141,6 +141,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * */
     // GameStateInitials
     let { setScore, scoreSetted, setShowDialog, showDialog, } = useGameStore()
+
     enum Phases {
         start = 0,
         playing = 1,
@@ -152,7 +153,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const initGameState = {
         flow: 0,
         targetFlow: 0,
-        level: 10,
+        level: 0,
         out: 0,
         pressure: 0,
         targetPressure: 0,
@@ -187,7 +188,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         } = gameState
 
         console.log(phase)
-        console.log(elapsedTime)
         if (scoreSetted || phase == Phases.end) {
             return
         }
@@ -212,7 +212,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 elapsedTime,
                 flowVariances
             })
-            !showDialog && setShowDialog(true)
             console.log({
                 lostResoan,
                 elapsedTime,
@@ -282,7 +281,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 gameState.temp = generateRandomTemp()
             }
         }
-    }, );
+    });
 
     useEffect(() => {
         const handleKeyDown = (event: any) => {
@@ -296,6 +295,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
             window.removeEventListener('keydown', handleKeyDown);
         };
     }, []);
+
 
     return (
         <>
