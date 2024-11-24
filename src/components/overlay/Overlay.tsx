@@ -120,15 +120,4 @@ const Count: React.FC<ICount> = ({ start },) => {
     </>
 }
 
-type TextProps = {
-    children: React.ReactNode;
-}
-const Text: React.FC<TextProps> = ({ children }) => {
-    return <>
-        <div className={"text-xl font-ibmBios"}>
-            {children}
-        </div>
-    </>
-}
-
 export { Overlay }

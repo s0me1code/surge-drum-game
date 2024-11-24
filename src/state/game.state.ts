@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { db } from "../firebase/config";
 import { addDoc, collection } from "firebase/firestore";
-import { IDifficulty } from "../components/home.carusousel";
 
 export enum ILostReasons {
     HP = "high pressure",
