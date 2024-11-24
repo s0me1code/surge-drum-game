@@ -31,7 +31,7 @@ const Overlay: React.FC<IHomeChild> = () => {
     // }
     function formatSecondsToMinutes(seconds: number): string {
         const minutes: string = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const remainingSeconds: string = String(seconds % 60).padStart(2, '0');
+        const remainingSeconds: string = String((seconds % 60).toFixed(0)).padStart(2, '0');
         return `${minutes}:${remainingSeconds}`;
     }
     useEffect(() => {
@@ -48,7 +48,7 @@ const Overlay: React.FC<IHomeChild> = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-3xl">Scour: {formatSecondsToMinutes(elapsedTime)}</DialogTitle>
+                    <DialogTitle className="text-3xl">Your Scour - {formatSecondsToMinutes(elapsedTime)}</DialogTitle>
                     <DialogDescription className="text-xl">
                         Your reach the end of the game, becouse
                         <span className="text-primary font-bold underline">
