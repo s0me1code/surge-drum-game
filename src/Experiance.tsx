@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { motion } from 'framer-motion'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import { useRef } from 'react'
 import './App.css'
 import { useCoord } from './state/coordinates.state'
@@ -59,6 +59,12 @@ const ExperinaceCanvas = () => {
             ref={directionalLightRef}
             position={_toArray({ ...directionalLight.position })}
             intensity={1} />
+
+        <Environment
+            files="./factory.hdr"
+            background
+        //blur={.5}
+        />
 
         {/* Camera */}
         <PerspectiveCamera

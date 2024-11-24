@@ -19,7 +19,7 @@ const conf = {
     lostReasonsLLT: " your level droped below 10",
 }
 const Overlay: React.FC<IHomeChild> = () => {
-    const {  lostResoan, gauges, showDialog, } = useGameStore()
+    const { lostResoan, gauges, showDialog, elapsedTime } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
 
     const handlePlayAgain = () => {
@@ -29,6 +29,11 @@ const Overlay: React.FC<IHomeChild> = () => {
     //     setOpen(false)
     //     navigate("/dashboard")
     // }
+    function formatSecondsToMinutes(seconds: number): string {
+        const minutes: string = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const remainingSeconds: string = String(seconds % 60).padStart(2, '0');
+        return `${minutes}:${remainingSeconds}`;
+    }
     useEffect(() => {
         if (showDialog)
             setOpen(true)
@@ -38,12 +43,12 @@ const Overlay: React.FC<IHomeChild> = () => {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="select-none absolute top-3 right-5 z-20" >
                 {showDialog && <Button variant={"destructive"}>
-                    Game Over
+                    Reopen Dialog
                 </Button>}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle className="text-3xl">Game Over</DialogTitle>
+                    <DialogTitle className="text-3xl">Scour: {formatSecondsToMinutes(elapsedTime)}</DialogTitle>
                     <DialogDescription className="text-xl">
                         Your reach the end of the game, becouse
                         <span className="text-primary font-bold underline">
