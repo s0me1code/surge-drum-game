@@ -153,7 +153,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const initGameState = {
         flow: 0,
         targetFlow: 0,
-        level: 0,
+        level: 10,
         out: 0,
         pressure: 0,
         targetPressure: 0,
