@@ -25,8 +25,8 @@ const ExperinaceCanvas = () => {
     /**
      * Helpers
      * */
-    useHelper(directionalLightRef as React.MutableRefObject<THREE.Object3D>, THREE.DirectionalLightHelper, 2);
-    useHelper(cameraRef as React.MutableRefObject<THREE.Object3D>, THREE.CameraHelper);
+    //useHelper(directionalLightRef as React.MutableRefObject<THREE.Object3D>, THREE.DirectionalLightHelper, 2);
+    //useHelper(cameraRef as React.MutableRefObject<THREE.Object3D>, THREE.CameraHelper);
 
     /**
      * Coordinates
@@ -48,8 +48,8 @@ const ExperinaceCanvas = () => {
 
     return <>
         <OrbitControls />
-        <Perf position="top-left" />
-        <axesHelper args={[2]} />
+        {/*<Perf position="top-left" />*/}
+        {/*<axesHelper args={[2]} />*/}
         {/* <LevaCoord /> */}
 
         {/* Light*/}
@@ -68,7 +68,7 @@ const ExperinaceCanvas = () => {
             fov={65}
             position={_toArray(camera.position)} />
 
-        <Ground />
+        {/*<Ground />*/}
         <Gauges />
         <Model />
     </>
