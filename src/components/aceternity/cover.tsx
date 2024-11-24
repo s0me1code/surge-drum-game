@@ -130,7 +130,7 @@ export const Cover = ({
                     },
                 }}
                 className={cn(
-                    "dart:text-white inline-block text-neutral-900 relative z-20 group-hover/cover:text-white transition duration-200",
+                    "dart:text-white inline-block text-slate-800 relative z-20 group-hover/cover:text-white transition duration-200",
                     className
                 )}
             >

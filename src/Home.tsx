@@ -18,7 +18,7 @@ const Landing: React.FC<IHomeChild> = ({ setPhase }) => {
     const handleClickCover = () => { setPhase && setPhase(Phases.form) }
     return <>
         <div className="h-full w-full flex justify-center items-center">
-            <h1 className="text-4xl md:text-4xl lg:text-6xl font-semibold max-w-7xl mx-auto text-center mb-24 relative z-20 py-6 bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-neutral-700 to-neutral-700 dart:from-neutral-800 dart:via-white dart:to-white">
+            <h1 className="text-4xl md:text-4xl lg:text-6xl font-semibold max-w-7xl mx-auto text-center mb-24 relative z-20 py-6 text-slate-900 dart:from-neutral-800 dart:via-white dart:to-white">
                 Surge durm simulation <br /> game, <span className="cursor-pointer" onClick={handleClickCover} ><Cover>Lets go</Cover></span>
             </h1>
         </div>
