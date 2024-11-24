@@ -53,7 +53,7 @@ const ExperinaceCanvas = () => {
         {/* <LevaCoord /> */}
 
         {/* Light*/}
-        <ambientLight intensity={.3} />
+        <ambientLight intensity={.1} />
         <directionalLight
             castShadow
             ref={directionalLightRef}
@@ -63,7 +63,9 @@ const ExperinaceCanvas = () => {
         <Environment
             files="./factory.hdr"
             background
-        //blur={.5}
+            backgroundIntensity={.5}
+            backgroundBlurriness={.08}
+            environmentIntensity={.2}
         />
 
         {/* Camera */}
@@ -83,7 +85,6 @@ const ExperinaceCanvas = () => {
 export const Experinace: React.FC<IHomeChild> = ({ setPhase }) => {
     const { startAn, convasAn } = useAnStore()
     return <>
-
         {startAn && <motion.div
             {...convasAn}
             animate={startAn ? "on" : "off"}
