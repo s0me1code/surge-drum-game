@@ -12,20 +12,9 @@ type IGauges = {
     pressure: number,
     temp: number,
     out: number,
-    targetFlow: number,
-    targetPressure: number,
-    spaceDown: boolean,
-    levelCapTop: number,
-    levelCapBottom: number,
 }
 export type IScore = {
-    gauges: {
-        flow: number,
-        level: number,
-        pressure: number,
-        temp: number,
-        out: number,
-    },
+    gauges: IGauges,
     lostResoan: ILostReasons,
     elapsedTime: number,
     flowVariances: number,
@@ -34,9 +23,6 @@ export type IScore = {
     difficulty?: string,
 }
 type IGameStore = {
-    restart: boolean,
-    running: boolean,
-    setRunning: (running: boolean) => void,
     name?: string,
     difficulty?: string,
     count: number,
@@ -45,12 +31,8 @@ type IGameStore = {
     elapsedTime: number,
     flowVariances: number,
     gauges: IGauges,
-    setGauges: (gauges: IGauges) => void,
-    spaceDown: boolean,
-    setSpaceDown: (spaceDown: boolean) => void,
     showDialog: boolean,
     setShowDialog: (showDialog: boolean) => void,
-    setRestart: (restart: boolean) => void,
     setScore: (arg0: IScore) => void,
     setDetails: (arg0: { name: string, difficulty: string }) => void,
 }
@@ -66,10 +48,6 @@ const handleAddScore = async (score: IScore) => {
 };
 
 const useGameStore = create<IGameStore>((set, get) => ({
-    running: false,
-    setRunning: (running) => set(() => ({ running })),
-    restart: true,
-    setRestart: (restart) => set(() => ({ restart })),
     count: 5,
     scoreSetted: false,
     elapsedTime: 0,
@@ -82,13 +60,8 @@ const useGameStore = create<IGameStore>((set, get) => ({
         pressure: 0,
         targetPressure: 0,
         temp: 0,
-        spaceDown: false,
-        levelCapTop: 0,
-        levelCapBottom: 0,
     },
     setGauges: (gauges: IGauges) => set(() => ({ gauges })),
-    spaceDown: false,
-    setSpaceDown: (spaceDown) => set(() => ({ spaceDown })),
     showDialog: false,
     setShowDialog: (showDialog) => set(() => ({ showDialog })),
     setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set(() => {

@@ -10,9 +10,7 @@ import {
     DialogTrigger,
 } from "../../../components/ui/dialog"
 import useGameStore, { ILostReasons } from "../../state/game.state";
-import { Card } from "../../../components/ui/card";
-import { useNavigate } from 'react-router-dom';
-import { IHomeChild, Phases } from "../../Home";
+import { IHomeChild, } from "../../Home";
 
 const conf = {
     countT: "Get ready will start in ...",
@@ -20,20 +18,17 @@ const conf = {
     lostReasonsHPT: " your pressure went higher than 340",
     lostReasonsLLT: " your level droped below 10",
 }
-const Overlay: React.FC<IHomeChild> = ({ setPhase }) => {
-    const navigate = useNavigate();
-    const { count, lostResoan, gauges, showDialog, setRestart, restart } = useGameStore()
+const Overlay: React.FC<IHomeChild> = () => {
+    const {  lostResoan, gauges, showDialog, } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
 
     const handlePlayAgain = () => {
-        setRestart(!restart)
-        setOpen(false)
-        setPhase(Phases.form)
+        window.location.reload();
     }
-    const handelDashboard = () => {
-        setOpen(false)
-        navigate("/dashboard")
-    }
+    // const handelDashboard = () => {
+    //     setOpen(false)
+    //     navigate("/dashboard")
+    // }
     useEffect(() => {
         if (showDialog)
             setOpen(true)
@@ -84,40 +79,40 @@ const Overlay: React.FC<IHomeChild> = ({ setPhase }) => {
                 </div>
                 <DialogFooter className="">
                     <Button onClick={handlePlayAgain} className="border-2" variant={"outline"}>Play Agian</Button>
-                    <Button onClick={handelDashboard} >Dashboard</Button>
+                    {/*   <Button onClick={handelDashboard} >Dashboard</Button>*/}
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-        <Count start={count} />
+        {/*<Count start={count} />*/}
     </>
 }
-
-type ICount = {
-    start: number,
-}
-const Count: React.FC<ICount> = ({ start },) => {
-    const { running } = useGameStore()
-    const [count, setCount] = useState(start);
-    useEffect(() => {
-        const timerInterval = running ? setInterval(() => {
-            setCount((prevTime) => {
-                if (prevTime === 0) {
-                    clearInterval(timerInterval);
-                    return 0;
-                } else {
-                    return prevTime - 1;
-                }
-            });
-        }, 1000) : undefined
-        return () => clearInterval(timerInterval);
-    }, []);
-    return <>
-        {count > 0 && <div className="absolute text-[10rem] z-20 leading-tight top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2">
-            <Card className="bg-primary-foreground/50 border-primary">
-                {count}
-            </Card>
-        </div>}
-    </>
-}
-
+//
+// type ICount = {
+//     start: number,
+// }
+// const Count: React.FC<ICount> = ({ start },) => {
+//     const { running } = useGameStore()
+//     const [count, setCount] = useState(start);
+//     useEffect(() => {
+//         const timerInterval = running ? setInterval(() => {
+//             setCount((prevTime) => {
+//                 if (prevTime === 0) {
+//                     clearInterval(timerInterval);
+//                     return 0;
+//                 } else {
+//                     return prevTime - 1;
+//                 }
+//             });
+//         }, 1000) : undefined
+//         return () => clearInterval(timerInterval);
+//     }, [running]);
+//     return <>
+//         {count > 0 && <div className="absolute text-[10rem] z-20 leading-tight top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2">
+//             <Card className="bg-primary-foreground/50 border-primary">
+//                 {count}
+//             </Card>
+//         </div>}
+//     </>
+// }
+//
 export { Overlay }

@@ -29,7 +29,7 @@ const walkAn: MotionProps = {
     variants: {
         on: {
             opacity: [0, 1, 1],
-            translateX: [0, 0, "-150%"]
+            translateX: [0, 0, "-190%"]
         },
         off: {
             ...offTransitionComm,
@@ -69,7 +69,7 @@ const convasAn: MotionProps = {
             translateX: '100%',
         },
     },
-//    initial: { translateX: '100%' },
+    //    initial: { translateX: '100%' },
     exit: { opacity: 0 },
     transition: {
         ...transitionComm,

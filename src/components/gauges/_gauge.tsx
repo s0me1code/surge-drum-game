@@ -148,7 +148,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         end = 2
     }
     let phase = Phases.start
-    const count = 20
+    const count = 10
     let countStart = 0
     const initGameState = {
         flow: 0,
@@ -174,6 +174,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     let lastUpdateTime = 0;
     let init = true;
     useFrame((state, delta) => {
+        if (!start) return
         const elapsedTime = state.clock.elapsedTime
         let {
             flow,
@@ -206,12 +207,13 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
             phase = Phases.end
-            !scoreSetted &&  setScore({
+            !scoreSetted && setScore({
                 lostResoan,
                 gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
                 elapsedTime,
                 flowVariances
             })
+            !showDialog && setShowDialog(true)
             console.log({
                 lostResoan,
                 elapsedTime,
@@ -283,11 +285,13 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         }
     });
 
+    let start = false
     useEffect(() => {
         const handleKeyDown = (event: any) => {
             if (event.key === ' ' || event.key === 'a') {
                 event.preventDefault();
                 gameState.spaceDown = true
+                start = true
             }
         };
         window.addEventListener('keydown', handleKeyDown);

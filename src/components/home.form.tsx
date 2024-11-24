@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, MotionProps } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ToggleGroupItem, ToggleGroup } from "../.././components/ui/toggle-group"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../.././components/ui/card"
 import { Input } from "../.././components/ui/input"
@@ -21,17 +21,17 @@ const conf: IConf = {
         {
             label: "Easy",
             value: "easy",
-            videoUrl: "./easy.mp4",
+            videoUrl: "./easy.gif",
         },
         {
             label: "Medium",
             value: "medium",
-            videoUrl: "./medium.mp4",
+            videoUrl: "./medium.gif",
         },
         {
             label: "Hard",
             value: "hard",
-            videoUrl: "./hard.mp4",
+            videoUrl: "./hard.gif",
         }
     ],
     button: "Submit"
@@ -39,7 +39,7 @@ const conf: IConf = {
 
 export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
 
-    const { setDetails, setRunning, running } = useGameStore()
+    const { setDetails } = useGameStore()
     const { toast } = useToast()
     const [difficulty, setDifficalty] = useState<string>()
     const [name, setName] = useState<string>()
@@ -108,7 +108,7 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
             </Card>
         </motion.div>
 
-        <Button
+        {/*<Button
             className='absolute z-50 top-0 right-1/2'
             onClick={() => {
                 console.log(running)
@@ -116,7 +116,7 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
                 setRunning(true)
             }} >
             {conf.button}
-        </Button>
+        </Button>*/}
         <AnimatePresence mode='wait'>
             <div className="w-1/2 flex-col relative">
                 <motion.div
@@ -141,12 +141,9 @@ export const Form: React.FC<IHomeChild> = ({ setPhase }) => {
 const Video = () => {
     return (
         <Card className=" w-[36rem] overflow-clip p-1">
-            <video
+            <img
                 className="rounded-lg"
-                src={"./walk.mp4"}
-                controls={false}
-                autoPlay
-                loop
+                src={"./walk.gif"}
             />
         </Card>
     );
