@@ -140,14 +140,15 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * Use Frame
      * */
     // GameStateInitials
-    let { setScore, scoreSetted } = useGameStore()
+    let { setScore, scoreSetted, setShowDialog, showDialog, } = useGameStore()
+
     enum Phases {
         start = 0,
         playing = 1,
         end = 2
     }
     let phase = Phases.start
-    const count = 5
+    const count = 20
     let countStart = 0
     const initGameState = {
         flow: 0,
@@ -205,7 +206,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
             phase = Phases.end
-            !scoreSetted && setScore({
+            !scoreSetted &&  setScore({
                 lostResoan,
                 gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
                 elapsedTime,
@@ -293,7 +294,8 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [])
+    }, []);
+
 
     return (
         <>

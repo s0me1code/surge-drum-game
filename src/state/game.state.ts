@@ -13,9 +13,20 @@ type IGauges = {
     pressure: number,
     temp: number,
     out: number,
+    targetFlow: number,
+    targetPressure: number,
+    spaceDown: boolean,
+    levelCapTop: number,
+    levelCapBottom: number,
 }
 export type IScore = {
-    gauges: IGauges,
+    gauges: {
+        flow: number,
+        level: number,
+        pressure: number,
+        temp: number,
+        out: number,
+    },
     lostResoan: ILostReasons,
     elapsedTime: number,
     flowVariances: number,
@@ -35,6 +46,9 @@ type IGameStore = {
     elapsedTime: number,
     flowVariances: number,
     gauges: IGauges,
+    setGauges: (gauges: IGauges) => void,
+    spaceDown: boolean,
+    setSpaceDown: (spaceDown: boolean) => void,
     showDialog: boolean,
     setShowDialog: (showDialog: boolean) => void,
     setRestart: (restart: boolean) => void,
@@ -63,11 +77,19 @@ const useGameStore = create<IGameStore>((set, get) => ({
     flowVariances: 1,
     gauges: {
         flow: 0,
-        level: 0,
-        pressure: 0,
-        temp: 0,
+        targetFlow: 0,
+        level: 10,
         out: 0,
+        pressure: 0,
+        targetPressure: 0,
+        temp: 0,
+        spaceDown: false,
+        levelCapTop: 0,
+        levelCapBottom: 0,
     },
+    setGauges: (gauges: IGauges) => set(() => ({ gauges })),
+    spaceDown: false,
+    setSpaceDown: (spaceDown) => set(() => ({ spaceDown })),
     showDialog: false,
     setShowDialog: (showDialog) => set(() => ({ showDialog })),
     setScore: ({ elapsedTime, flowVariances, gauges, lostResoan }) => set(() => {
@@ -80,7 +102,7 @@ const useGameStore = create<IGameStore>((set, get) => ({
             })
         return { gauges, elapsedTime, flowVariances, lostResoan, scoreSetted: true, running: false }
     }),
-    setDetails: ({ name, difficulty }) => set(() => ({ name, difficulty, running: true }))
+    setDetails: ({ name, difficulty }) => set(() => ({ name, difficulty }))
 }));
 
 export default useGameStore;

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { motion } from 'framer-motion'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei'
 import { useRef } from 'react'
@@ -11,6 +12,9 @@ import { Ground } from './components/ground'
 import { Model } from './components/Model'
 import { Perf } from 'r3f-perf'
 import { Overlay } from './components/overlay/Overlay'
+import { IHomeChild } from './Home'
+import { Card } from '../components/ui/card'
+import { useAnStore } from './state/animation.store'
 
 const ExperinaceCanvas = () => {
     /**
@@ -71,12 +75,25 @@ const ExperinaceCanvas = () => {
     </>
 }
 
-export const Experinace = () => {
+export const Experinace: React.FC<IHomeChild> = ({ setPhase }) => {
+    const { startAn, convasAn } = useAnStore()
     return <>
-        <Overlay />
-        <Canvas  shadows style={{ background: "#222" }}>
-            <ExperinaceCanvas />
-        </Canvas>
+
+        {startAn && <motion.div
+            {...convasAn}
+            animate={startAn ? "on" : "off"}
+            className='absolute top-0 right-0 z-10 w-full h-full p-4 pt-16 flex flex-col justify-between align-top text-center text-2xl font-semibold '>
+            <Overlay setPhase={setPhase} />
+            <div className='-mt-12'>Press <span className='text-xl bg-gray-300 p-1 px-2 rounded-lg overflow-hidden'> SPACE</span> to increse the Out rate</div>
+            <Canvas
+// frameloop='demand'
+                shadows
+                style={{ background: "#222" }}
+                className='absolute w-fill h-full rounded-xl'
+            >
+                <ExperinaceCanvas />
+            </Canvas>
+        </motion.div>}
+
     </>
 }
-

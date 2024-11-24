@@ -21,7 +21,7 @@ export const DifficultyCarousel = ({ selectedDifficulty, difficulties }: Difficu
         }
     }, [api, selectedDifficulty, difficulties])
     return (
-        <Carousel setApi={setApi} className="w-full max-w-2xl mx-auto">
+        <Carousel setApi={setApi} className="w-full">
             <CarouselContent>
                 {difficulties.map((difficulty, index) => (
                     <CarouselItem key={index}>
@@ -40,10 +40,10 @@ const Video = ({ videoUrl }: IVideo) => {
     return (
         <Card className=" w-[36rem] overflow-clip p-1">
             <video
-                className="rounded-lg"
-                src={videoUrl}
                 autoPlay
                 loop
+                className="rounded-lg"
+                src={videoUrl}
                 controls={false}
             />
         </Card>
