@@ -85,7 +85,7 @@ export const Experinace: React.FC<IHomeChild> = ({ setPhase }) => {
             <Overlay setPhase={setPhase} />
             <div className='-mt-12'>Press <span className='text-xl bg-gray-300 p-1 px-2 rounded-lg overflow-hidden'> SPACE</span> to increse the Out rate</div>
             <Canvas
-                frameloop='demand'
+// frameloop='demand'
                 shadows
                 style={{ background: "#222" }}
                 className='absolute w-fill h-full rounded-xl'

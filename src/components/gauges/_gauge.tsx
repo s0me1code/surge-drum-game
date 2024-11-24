@@ -140,14 +140,14 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
      * Use Frame
      * */
     // GameStateInitials
-    let { setScore, scoreSetted, setShowDialog, showDialog, restart, running } = useGameStore()
+    let { setScore, scoreSetted, setShowDialog, showDialog, } = useGameStore()
     enum Phases {
         start = 0,
         playing = 1,
         end = 2
     }
     let phase = Phases.start
-    const count = 5
+    const count = 20
     let countStart = 0
     const initGameState = {
         flow: 0,
@@ -173,7 +173,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     let lastUpdateTime = 0;
     let init = true;
     useFrame((state, delta) => {
-        if (!running) return
         const elapsedTime = state.clock.elapsedTime
         let {
             flow,
@@ -188,7 +187,6 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         } = gameState
 
         console.log(phase)
-        false && running && invalidate()
         console.log(elapsedTime)
         if (scoreSetted || phase == Phases.end) {
             return
@@ -208,7 +206,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 pressure >= lossConditions.pressure ?
                     ILostReasons.HP : ILostReasons.LL
             phase = Phases.end
-            !scoreSetted && running && setScore({
+            !scoreSetted &&  setScore({
                 lostResoan,
                 gauges: { flow: targetFlow, pressure: targetPressure, level, temp, out },
                 elapsedTime,
@@ -284,14 +282,9 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
                 gameState.temp = generateRandomTemp()
             }
         }
-    }, running ? undefined : 0);
+    }, );
 
-    const { clock, invalidate } = useThree();
     useEffect(() => {
-        if (restart) {
-            clock.elapsedTime = 0;
-            clock.start();
-        }
         const handleKeyDown = (event: any) => {
             if (event.key === ' ' || event.key === 'a') {
                 event.preventDefault();
@@ -302,7 +295,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [restart]);
+    }, []);
 
     return (
         <>
