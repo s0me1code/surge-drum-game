@@ -82,6 +82,12 @@ const Overlay: React.FC<IHomeChild> = () => {
                         <span className={"font-semibold"}>{gauges.out.toFixed(2)}</span>
                     </div>
                 </div>
+                <div>
+                    <img
+                        className="rounded-lg"
+                        src={"./flare.gif"}
+                    />
+                </div>
                 <DialogFooter className="">
                     <Button onClick={handlePlayAgain} className="border-2" variant={"outline"}>Play Agian</Button>
                     {/*   <Button onClick={handelDashboard} >Dashboard</Button>*/}

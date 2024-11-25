@@ -151,7 +151,7 @@ const Gauges = (props: JSX.IntrinsicElements['group']) => {
     const count = 10
     let countStart = 0
     const initGameState = {
-        flow: 0,
+        flow: 10,
         targetFlow: 0,
         level: 10,
         out: 0,
