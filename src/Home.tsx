@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Experinace } from "./Experiance"
 import { Cover } from "./components/aceternity/cover"
 import { Form } from "./components/home.form"
+import { useLocation, useNavigate } from "react-router-dom"
 
 export enum Phases {
     landing = 0,
@@ -27,6 +28,18 @@ const Landing: React.FC<IHomeChild> = ({ setPhase }) => {
 
 export const Home = () => {
     const [phase, setPhase] = useState<Phases>(Phases.landing)
+
+    const location = useLocation();
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (location.state?.reset) {
+            // Perform reset logic here, e.g., reset state or clear data
+            console.log('Resetting home page state...');
+            window.location.reload()
+            // Clear the reset state to prevent further triggering of this effect
+            navigate('.', { replace: true, state: {} });
+        }
+    }, [location, navigate]);
     return <>
         {phase == Phases.landing ? <Landing setPhase={setPhase} /> :
             <div className="relative w-full h-full overflow-hidden">

@@ -11,6 +11,8 @@ import {
 } from "../../../components/ui/dialog"
 import useGameStore, { ILostReasons } from "../../state/game.state";
 import { IHomeChild, } from "../../Home";
+import { formatSecondsToMinutes } from "../../utils/_";
+import { useNavigate } from "react-router-dom";
 
 const conf = {
     countT: "Get ready will start in ...",
@@ -19,20 +21,15 @@ const conf = {
     lostReasonsLLT: " your level droped below 10",
 }
 const Overlay: React.FC<IHomeChild> = () => {
+    const navigate = useNavigate();
     const { lostResoan, gauges, showDialog, elapsedTime } = useGameStore()
     const [open, setOpen] = useState<boolean>(false)
 
     const handlePlayAgain = () => {
         window.location.reload();
     }
-    // const handelDashboard = () => {
-    //     setOpen(false)
-    //     navigate("/dashboard")
-    // }
-    function formatSecondsToMinutes(seconds: number): string {
-        const minutes: string = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const remainingSeconds: string = String((seconds % 60).toFixed(0)).padStart(2, '0');
-        return `${minutes}:${remainingSeconds}`;
+    const handelDashboard = () => {
+        navigate("/dashboard")
     }
     useEffect(() => {
         if (showDialog)
@@ -90,7 +87,7 @@ const Overlay: React.FC<IHomeChild> = () => {
                 </div>
                 <DialogFooter className="">
                     <Button onClick={handlePlayAgain} className="border-2" variant={"outline"}>Play Agian</Button>
-                    {/*   <Button onClick={handelDashboard} >Dashboard</Button>*/}
+                    <Button onClick={handelDashboard} >Dashboard</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
